@@ -1,0 +1,13 @@
+{
+  "version": "v0.5.1",
+  "url": "https://github.com/IceBigPig/portly/releases/tag/v0.5.1",
+  "published_at": "2026-10-25T17:42:22Z",
+  "assets": {
+    "mac-dmg": "https://github.com/IceBigPig/portly/releases/download/v0.5.1/Portly-0.5.1-macOS-arm64.dmg",
+    "mac-zip": "https://github.com/IceBigPig/portly/releases/download/v0.5.1/Portly-0.5.1-macOS-arm64.zip",
+    "win-x64-setup": "https://github.com/IceBigPig/portly/releases/download/v0.5.1/Portly-0.5.1-windows-x64-setup.exe",
+    "win-x64-zip": "https://github.com/IceBigPig/portly/releases/download/v0.5.1/Portly-0.5.1-windows-x64-portable.zip",
+    "win-arm64-setup": "https://github.com/IceBigPig/portly/releases/download/v0.5.1/Portly-0.5.1-windows-arm64-setup.exe",
+    "win-arm64-zip": "https://github.com/IceBigPig/portly/releases/download/v0.5.1/Portly-0.5.1-windows-arm64-portable.zip"
+  }
+}

@@ -10,6 +10,9 @@ on:
   push:
     tags: ['v*']
     branches: [main]
+    paths-ignore:
+      - 'website/**'
+      - '.github/workflows/pages.yml'
 
 permissions:
   contents: read

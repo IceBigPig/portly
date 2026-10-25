@@ -6,6 +6,7 @@ macOS M 系列安装包要求 macOS 13+，使用 DMG 拖入 Applications 或解�
 
 源码采用 [Apache-2.0](LICENSE)；第三方许可证与 LGPL 对应源码见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
+- [官方网站](https://icebigpig.github.io/portly/) · [English](https://icebigpig.github.io/portly/?lang=en)
 - [发行页面](https://github.com/IceBigPig/portly/releases)
 - [原生构建与安装验证](https://github.com/IceBigPig/portly/actions/workflows/release.yml)
 - [发布步骤及签名状态](docs/RELEASING.md)
