@@ -1,6 +1,6 @@
 # Portly · 串口调试助手
 
-Flutter / Dart 桌面应用，支持串口、TCP 客户端、TCP 服务端和 UDP。当前版本 **0.5.0**。
+Flutter / Dart 桌面应用，支持串口、TCP 客户端、TCP 服务端和 UDP。当前版本 **0.5.1**。
 
 macOS M 系列安装包要求 macOS 13+，使用 DMG 拖入 Applications 或解压 ZIP。Windows x64 / ARM64 提供按架构生成的安装器与便携 ZIP；构建及安装校验由对应原生 GitHub Actions runner 执行。Linux 工程保留，尚无本次发行包。
 
@@ -20,6 +20,13 @@ open build/macos/Build/Products/Release/Portly.app
 ```
 
 本机环境：Flutter 3.47.7 / Dart 3.13.5、Xcode 27.1、CocoaPods 1.17.0。脚本使用工程局部 `DEVELOPER_DIR`，不修改系统设置。原生依赖可通过 `brew install cocoapods automake libtool` 安装。
+
+## 0.5.1
+
+- Windows 串口设备名称直接通过 Unicode 系统接口读取，避免系统 ANSI 代码页与 UTF-8 不一致造成的乱码；枚举仍在后台执行。
+- Windows 原生串口错误提示通过 Unicode 系统消息读取，保留原始错误码。
+- Windows 使用本机中文界面字体，普通文字和等宽区域均保留中文字体回退；不要求修改系统语言或启用全局 UTF-8。
+- 串口收发字节和用户选择的报文编码保持独立，不随界面文字处理改变。
 
 ## 0.5.0
 
@@ -101,4 +108,4 @@ dart analyze lib test
 
 ## 从源码分发
 
-安装包、便携包与 `Portly-0.5.0-source.zip` 应在同一个 Release 页面提供。源码包包含应用完整源码、资源、锁文件、平台工程、构建脚本及 LGPL 对应源码，支持修改后完整重建。CI 首先验证版本、各架构二进制与哈希，再运行 Windows 安装/启动/安全退出/卸载检查；main 推送与版本标签仅建立或更新草稿 Release，发布者检查附件后再公开。详见 [RELEASING.md](docs/RELEASING.md)。
+安装包、便携包与 `Portly-0.5.1-source.zip` 应在同一个 Release 页面提供。源码包包含应用完整源码、资源、锁文件、平台工程、构建脚本及 LGPL 对应源码，支持修改后完整重建。CI 首先验证版本、各架构二进制与哈希，再运行 Windows 安装/启动/安全退出/卸载检查；main 推送与版本标签仅建立或更新草稿 Release，发布者检查附件后再公开。详见 [RELEASING.md](docs/RELEASING.md)。

@@ -7,8 +7,48 @@ import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 import '../core/models.dart';
 import 'transport_base.dart';
+import 'windows_serial_metadata.dart';
 
-List<PortInfo> enumeratePorts() => SerialPort.availablePorts.map((path) {
+List<PortInfo> enumeratePorts() {
+  if (!Platform.isWindows) {
+    return SerialPort.availablePorts.map(_portInfo).toList();
+  }
+  // The library's Windows friendly names are ANSI, whereas its Dart wrapper
+  // expects UTF-8. Read names through the wide Win32 API instead. This whole
+  // scan remains inside enumeratePortsAsync's worker isolate.
+  Map<String, String> descriptions;
+  try {
+    descriptions = readWindowsSerialDescriptions();
+  } catch (_) {
+    descriptions = const {};
+  }
+  final paths = <String>{...descriptions.keys};
+  try {
+    paths.addAll(SerialPort.availablePorts.map((path) => path.toUpperCase()));
+  } catch (_) {
+    if (paths.isEmpty) rethrow;
+  }
+  final ports = <PortInfo>[];
+  for (final path in paths) {
+    try {
+      ports.add(_portInfo(path, description: descriptions[path] ?? path));
+    } catch (_) {
+      // A disconnected or inaccessible device must not hide the other ports.
+      // A plain COM name is also safer than displaying already damaged ANSI.
+      ports.add(PortInfo(path, descriptions[path] ?? path));
+    }
+  }
+  ports.sort((a, b) {
+    final first = int.tryParse(a.path.toUpperCase().replaceFirst('COM', ''));
+    final second = int.tryParse(b.path.toUpperCase().replaceFirst('COM', ''));
+    return first != null && second != null
+        ? first.compareTo(second)
+        : a.path.compareTo(b.path);
+  });
+  return ports;
+}
+
+PortInfo _portInfo(String path, {String? description}) {
   final p = SerialPort(path);
   try {
     final serial = p.serialNumber?.trim() ?? '';
@@ -18,11 +58,44 @@ List<PortInfo> enumeratePorts() => SerialPort.availablePorts.map((path) {
         : bluetooth.isNotEmpty
         ? 'bt:$bluetooth'
         : '';
-    return PortInfo(path, p.description ?? path, identity: identity);
+    return PortInfo(
+      path,
+      description ?? p.description ?? path,
+      identity: identity,
+    );
   } finally {
     p.dispose();
   }
-}).toList();
+}
+
+Object _serialErrorForDisplay(Object error) {
+  if (!Platform.isWindows || error is! SerialPortError) {
+    return error;
+  }
+  String? message;
+  try {
+    message = windowsSystemMessage(error.errorCode);
+  } catch (_) {
+    // Keep the original numeric failure even if formatting is unavailable.
+  }
+  return SerialPortError(
+    message ?? 'Windows 错误 ${error.errorCode}',
+    error.errorCode,
+  );
+}
+
+T _serialCall<T>(T Function() operation) {
+  try {
+    return operation();
+  } on SerialPortError catch (error, stack) {
+    Error.throwWithStackTrace(_serialErrorForDisplay(error), stack);
+  }
+}
+
+String _serialLastErrorText() {
+  final error = SerialPort.lastError;
+  return error == null ? '未知串口错误' : _serialErrorForDisplay(error).toString();
+}
 
 Future<List<PortInfo>> enumeratePortsAsync() => Isolate.run(enumeratePorts);
 
@@ -31,9 +104,13 @@ Future<Transport> openTransport(ConnectionConfig config) async {
   try {
     await transport.open();
     return transport;
-  } catch (_) {
-    await transport.close();
-    rethrow;
+  } catch (error, stack) {
+    try {
+      await transport.close();
+    } catch (_) {
+      // A secondary cleanup failure must not replace the opening error.
+    }
+    Error.throwWithStackTrace(_serialErrorForDisplay(error), stack);
   }
 }
 
@@ -84,8 +161,12 @@ class IoTransport
     if (!_closed) _events.add(event);
   }
 
-  void error(Object error) =>
-      emit(TransportEvent(message: error.toString(), closed: true));
+  void error(Object error) => emit(
+    TransportEvent(
+      message: _serialErrorForDisplay(error).toString(),
+      closed: true,
+    ),
+  );
   void checkPort(int port) {
     if (port < 1 || port > 65535) throw const FormatException('端口必须为 1–65535');
   }
@@ -108,7 +189,7 @@ class IoTransport
         final port = SerialPort(config.port);
         _serial = port;
         if (!port.openReadWrite()) {
-          throw StateError('无法打开 ${config.port}：${SerialPort.lastError}');
+          throw StateError('无法打开 ${config.port}：${_serialLastErrorText()}');
         }
         final settings = SerialPortConfig()
           ..baudRate = config.baud
@@ -156,7 +237,7 @@ class IoTransport
           try {
             final available = port.bytesAvailable;
             if (available < 0) {
-              throw StateError('串口读取失败：${SerialPort.lastError}');
+              throw StateError('串口读取失败：${_serialLastErrorText()}');
             }
             if (available > 0) {
               emit(
@@ -310,7 +391,7 @@ class IoTransport
     final settings = SerialPortConfig();
     if (dtr != null) settings.dtr = dtr ? SerialPortDtr.on : SerialPortDtr.off;
     if (rts != null) settings.rts = rts ? SerialPortRts.on : SerialPortRts.off;
-    _serial!.config = settings;
+    _serialCall(() => _serial!.config = settings);
     _serialStatus = SerialStatus(
       dtr: dtr ?? _serialStatus.dtr,
       rts: rts ?? _serialStatus.rts,
@@ -352,11 +433,13 @@ class IoTransport
         var offset = 0;
         while (offset < bytes.length) {
           if (_closed) throw StateError('连接已关闭');
-          final count = _serial!.write(
-            Uint8List.sublistView(bytes, offset),
-            timeout: 10,
+          final count = _serialCall(
+            () => _serial!.write(
+              Uint8List.sublistView(bytes, offset),
+              timeout: 10,
+            ),
           );
-          if (count <= 0) throw StateError('串口写入失败：${SerialPort.lastError}');
+          if (count <= 0) throw StateError('串口写入失败：${_serialLastErrorText()}');
           offset += count;
           if (offset < bytes.length) await Future<void>.delayed(Duration.zero);
         }

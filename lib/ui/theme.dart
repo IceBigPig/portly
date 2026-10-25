@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -7,7 +8,15 @@ const muted = Color(0xFF8692A8);
 const ink = Color(0xFF202D45);
 const mono = TextStyle(
   fontFamily: 'JetBrainsMono',
-  fontFamilyFallback: ['Menlo', 'Consolas'],
+  fontFamilyFallback: [
+    'Menlo',
+    'Consolas',
+    'Microsoft YaHei UI',
+    'Microsoft YaHei',
+    'PingFang SC',
+    'Noto Sans CJK SC',
+    'Noto Sans SC',
+  ],
   letterSpacing: .2,
 );
 
@@ -17,6 +26,17 @@ Color accent(BuildContext context) =>
     : blue;
 
 ThemeData appTheme(bool dark) {
+  final (fontFamily, fontFallbacks) = switch (defaultTargetPlatform) {
+    TargetPlatform.windows => (
+      'Microsoft YaHei UI',
+      const ['Microsoft YaHei', 'Segoe UI', 'Noto Sans CJK SC', 'Noto Sans SC'],
+    ),
+    TargetPlatform.linux => (
+      'Noto Sans',
+      const ['Noto Sans CJK SC', 'Noto Sans SC', 'DejaVu Sans'],
+    ),
+    _ => ('PingFang SC', const ['Microsoft YaHei', 'Noto Sans CJK SC']),
+  };
   final scheme = ColorScheme.fromSeed(
     seedColor: blue,
     primary: dark ? const Color(0xFF93B8FF) : blue,
@@ -36,8 +56,8 @@ ThemeData appTheme(bool dark) {
     scaffoldBackgroundColor: dark
         ? const Color(0xFF141B28)
         : const Color(0xFFF4F6FB),
-    fontFamily: 'PingFang SC',
-    fontFamilyFallback: const ['Microsoft YaHei', 'Noto Sans CJK SC'],
+    fontFamily: fontFamily,
+    fontFamilyFallback: fontFallbacks,
     textTheme: TextTheme(
       bodyMedium: TextStyle(
         fontSize: 13,

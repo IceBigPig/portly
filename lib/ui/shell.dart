@@ -368,7 +368,7 @@ class _AppShellState extends State<AppShell>
                   ),
                   const SizedBox(width: 20),
                   const Text(
-                    'v0.5.0',
+                    'v0.5.1',
                     style: TextStyle(color: muted, fontSize: 10),
                   ),
                 ],
@@ -525,7 +525,7 @@ Future<void> settings(BuildContext context, AppModel model) => showDialog(
             ),
             const SizedBox(height: 20),
             const Text(
-              'Portly 0.5.0',
+              'Portly 0.5.1',
               style: TextStyle(fontSize: 11, color: muted, height: 1.8),
             ),
           ],

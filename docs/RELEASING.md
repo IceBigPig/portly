@@ -1,6 +1,6 @@
 # 构建与发布
 
-当前版本0.5.0+5，源码Apache-2.0。第三方组件保持各自许可证，LGPL对应源码随安装包和源码包提供。
+当前版本0.5.1+6，源码Apache-2.0。第三方组件保持各自许可证，LGPL对应源码随安装包和源码包提供。
 
 ## 发行矩阵
 
@@ -18,7 +18,7 @@ macOS：
 
 ```sh
 flutter pub get --enforce-lockfile
-./tool/package-macos.sh --arch arm64 --version 0.5.0 --output-dir releases
+./tool/package-macos.sh --arch arm64 --version 0.5.1 --output-dir releases
 python3 tool/package-source.py --output-dir releases
 ```
 
@@ -40,7 +40,7 @@ Flutter3.47.7由原生Dart主机ABI选择Windows目标，不使用不存在的`-
 
 1. 确认`pubspec.yaml`版本与构建号，推送源码至`main`，在Actions等待三平台任务通过。
 2. main推送仅创建或更新对应版本的**草稿Release**，三平台构建、安装验证及校验和全部通过后才附加文件。手工任务默认只构建；勾选`create_draft_release`才建立草稿。
-3. 如使用版本标签触发构建，标签必须与项目版本一致，如`v0.5.0`；该流程同样只创建草稿。已公开版本需要先递增项目版本，不会自动替换已公开附件。
+3. 如使用版本标签触发构建，标签必须与项目版本一致，如`v0.5.1`；该流程同样只创建草稿。已公开版本需要先递增项目版本，不会自动替换已公开附件。
 4. 检查草稿中的DMG、两种Windows安装器/ZIP、同版本`source.zip`、原生验证报告和`SHA256SUMS`，再由发布者公开发布。已公开Release的附件不会被脚本覆盖。
 
 GitHub草稿与Artifact不等同于面向访客的正式公开下载。签名状态在报告中如实保留，哈希只验证文件一致性，不替代发行者身份认证。
