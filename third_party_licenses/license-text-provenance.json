@@ -1,0 +1,22 @@
+{
+  "Apache-2.0": {
+    "file": "../LICENSE",
+    "source": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "modified": false
+  },
+  "GPL-3.0": {
+    "file": "licenses/GPL-3.0.txt",
+    "source": "https://gcc.gnu.org/git/?p=gcc.git;a=blob_plain;f=COPYING3;hb=HEAD",
+    "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+    "verification": "Byte-identical to GNU GCC's official COPYING3 at collection time and the GCC GitHub mirror.",
+    "modified": false
+  },
+  "LGPL-3.0": {
+    "file": "licenses/LGPL-3.0.txt",
+    "source": "https://gcc.gnu.org/git/?p=gcc.git;a=blob_plain;f=COPYING3.LIB;hb=HEAD",
+    "sha256": "a853c2ffec17057872340eee242ae4d96cbf2b520ae27d903e1b2fef1a5f9d1c",
+    "verification": "Byte-identical to GNU GCC's official COPYING3.LIB at collection time and the GCC GitHub mirror.",
+    "modified": false
+  }
+}

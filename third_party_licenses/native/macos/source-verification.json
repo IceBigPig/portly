@@ -1,0 +1,31 @@
+{
+  "upstream_tag": "libserialport-0.1.1",
+  "upstream_commit": "348a6d353af8ac142f68fbf9fe0f4d070448d945",
+  "compared_compiled_inputs": [
+    {
+      "file": "serialport.c",
+      "identical": true,
+      "sha256": "607fd2c799c62af7aeef47d0c9a2f901cd2da5793b9437af366e0255a425ecfa"
+    },
+    {
+      "file": "macosx.c",
+      "identical": true,
+      "sha256": "0e29a3028cc310e608646591cb48b1e34f98f3cd4212c43d7a65a2beea46bf03"
+    },
+    {
+      "file": "libserialport_internal.h",
+      "identical": true,
+      "sha256": "c11079558eb047bde163b3c8dbf8ccacf2949fb7da537b034ab65d15f79f91bc"
+    },
+    {
+      "file": "libserialport.h.in",
+      "identical": true,
+      "sha256": "ae3efcc7beb8a698c0ba481057ef54dde56ae15e8091791529c3bd03fbf5cbcb"
+    }
+  ],
+  "generated_inputs": [
+    "config.h",
+    "libserialport.h"
+  ],
+  "note": "C sources are unchanged; generated configuration/header and original Pod build recipe are supplied separately."
+}

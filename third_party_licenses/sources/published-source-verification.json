@@ -1,0 +1,18 @@
+[
+  {
+    "package": "flutter_libserialport",
+    "version": "0.6.0",
+    "source_url": "https://pub.dev/api/archives/flutter_libserialport-0.6.0.tar.gz",
+    "published_archive_sha256": "f24b5fe6f1821d1c1b3bf2be737ca53f6b0ae78657032a790aa00abb810c8759",
+    "all_published_files_identical_to_resolved_cache": true,
+    "compared_file_count": 185
+  },
+  {
+    "package": "libserialport",
+    "version": "0.3.0+1",
+    "source_url": "https://pub.dev/api/archives/libserialport-0.3.0+1.tar.gz",
+    "published_archive_sha256": "392e1592def65282429832ec66fa25e9e163d3b37716b97691482e2406720727",
+    "all_published_files_identical_to_resolved_cache": true,
+    "compared_file_count": 18
+  }
+]

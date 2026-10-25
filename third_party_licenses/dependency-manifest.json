@@ -1,0 +1,1307 @@
+{
+  "schema": 1,
+  "scope": "All resolved locked packages, including SDK/dev/build/platform alternatives; not a claim that all are present in each binary.",
+  "pubspec_lock_sha256": "669f9435ef93af89681dfa512ecb30b4351aeb111c2a096c4c394e0950f0f824",
+  "flutter_version": "3.47.7",
+  "dart_version": "3.13.5",
+  "packages": [
+    {
+      "name": "args",
+      "dependency": "transitive",
+      "pub_archive_sha256": "d0481093c50b1da8910eb0bb301626d4d8eb7284aa739614d2b394ee09e3ea04",
+      "source": "hosted",
+      "version": "2.7.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/args-2.7.0/LICENSE",
+          "sha256": "dfb09c74e29386cd3e2719f32d4995d59526179753931d31840757c77fbf2791"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/args/versions/2.7.0"
+    },
+    {
+      "name": "async",
+      "dependency": "transitive",
+      "pub_archive_sha256": "e2eb0491ba5ddb6177742d2da23904574082139b07c1e33b8503b9f46f3e1a37",
+      "source": "hosted",
+      "version": "2.13.1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/async-2.13.1/LICENSE",
+          "sha256": "ff15faa32a2e638107b7789592b14426162a75ba620044ee2340a20ec6ce5e73"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/async/versions/2.13.1"
+    },
+    {
+      "name": "boolean_selector",
+      "dependency": "transitive",
+      "pub_archive_sha256": "8aab1771e1243a5063b8b0ff68042d67334e3feab9e95b9490f9a6ebf73b42ea",
+      "source": "hosted",
+      "version": "2.1.2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/boolean_selector-2.1.2/LICENSE",
+          "sha256": "b71519245009a3b8f126196a5408ec031e216e8e0d985085958c6543f82a8a2a"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/boolean_selector/versions/2.1.2"
+    },
+    {
+      "name": "characters",
+      "dependency": "transitive",
+      "pub_archive_sha256": "faf38497bda5ead2a8c7615f4f7939df04333478bf32e4173fcb06d428b5716b",
+      "source": "hosted",
+      "version": "1.4.1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/characters-1.4.1/LICENSE",
+          "sha256": "0371d1da6a57fb791db29d29b95333429205f51f3cb2eb3a0c12d91838a38744"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/characters/versions/1.4.1"
+    },
+    {
+      "name": "clock",
+      "dependency": "transitive",
+      "pub_archive_sha256": "e51d50bca3217c9a9fa2b41a30e4a38971133f5f9ec7a3d57bae095007f1d28e",
+      "source": "hosted",
+      "version": "1.1.3",
+      "license": "Apache-2.0",
+      "license_files": [
+        {
+          "file": "packages/clock-1.1.3/LICENSE",
+          "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/clock/versions/1.1.3"
+    },
+    {
+      "name": "code_assets",
+      "dependency": "transitive",
+      "pub_archive_sha256": "828110d598123b5ea96c00c9f3c72105bf79f8ee36c20a39b26209ade421ec57",
+      "source": "hosted",
+      "version": "2.1.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/code_assets-2.1.0/LICENSE",
+          "sha256": "21ae23b0b9ff67a2dc75ab085d1e8db8ac548c5faf370af17f28dd2ef3b52b7b"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/code_assets/versions/2.1.0"
+    },
+    {
+      "name": "collection",
+      "dependency": "transitive",
+      "pub_archive_sha256": "2f5709ae4d3d59dd8f7cd309b4e023046b57d8a6c82130785d2b0e5868084e76",
+      "source": "hosted",
+      "version": "1.19.1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/collection-1.19.1/LICENSE",
+          "sha256": "ff15faa32a2e638107b7789592b14426162a75ba620044ee2340a20ec6ce5e73"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/collection/versions/1.19.1"
+    },
+    {
+      "name": "cross_file",
+      "dependency": "transitive",
+      "pub_archive_sha256": "f141ea4f277af142a0356955707f6556f37b03947d39d55585981a06ca437bd6",
+      "source": "hosted",
+      "version": "0.3.5+5",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/cross_file-0.3.5+5/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/cross_file/versions/0.3.5+5"
+    },
+    {
+      "name": "crypto",
+      "dependency": "transitive",
+      "pub_archive_sha256": "c8ea0233063ba03258fbcf2ca4d6dadfefe14f02fab57702265467a19f27fadf",
+      "source": "hosted",
+      "version": "3.0.7",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/crypto-3.0.7/LICENSE",
+          "sha256": "ad6a71997da90924b2cfb1fb47ec46537f70faf469efe016168794ae45ed6888"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/crypto/versions/3.0.7"
+    },
+    {
+      "name": "cupertino_icons",
+      "dependency": "direct main",
+      "pub_archive_sha256": "41e005c33bd814be4d3096aff55b1908d419fde52ca656c8c47719ec745873cd",
+      "source": "hosted",
+      "version": "1.0.9",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/cupertino_icons-1.0.9/LICENSE",
+          "sha256": "310d6ab6483280280c9db122bded0a63c09558bc5743720f61dbcbb494db370a"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/cupertino_icons/versions/1.0.9"
+    },
+    {
+      "name": "desktop_multi_window",
+      "dependency": "direct main",
+      "pub_archive_sha256": "6a82209dfd29279258515157e5c08612542ebf7bfb3b55fb1dfcd32c076eea4d",
+      "source": "hosted",
+      "version": "0.3.1",
+      "license": "Apache-2.0",
+      "license_files": [
+        {
+          "file": "packages/desktop_multi_window-0.3.1/LICENSE",
+          "sha256": "07e78d4ec132261d6487f8b8df8edc0f526b4d4a1a6041ee0994e26c9c4b23bc"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/desktop_multi_window/versions/0.3.1"
+    },
+    {
+      "name": "dylib",
+      "dependency": "transitive",
+      "pub_archive_sha256": "bf609b3eb6492a3309b3d1dbe8f83a4031de5535dd7686be33487051cc760bb0",
+      "source": "hosted",
+      "version": "0.3.3",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/dylib-0.3.3/LICENSE",
+          "sha256": "d16c1431dbf3c509b215bd09cc72840cf0036107cec665c59bf0d89b0f98cd5b"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/dylib/versions/0.3.3"
+    },
+    {
+      "name": "fake_async",
+      "dependency": "transitive",
+      "pub_archive_sha256": "5368f224a74523e8d2e7399ea1638b37aecfca824a3cc4dfdf77bf1fa905ac44",
+      "source": "hosted",
+      "version": "1.3.3",
+      "license": "Apache-2.0",
+      "license_files": [
+        {
+          "file": "packages/fake_async-1.3.3/LICENSE",
+          "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/fake_async/versions/1.3.3"
+    },
+    {
+      "name": "ffi",
+      "dependency": "transitive",
+      "pub_archive_sha256": "6d7fd89431262d8f3125e81b50d3847a091d846eafcd4fdb88dd06f36d705a45",
+      "source": "hosted",
+      "version": "2.2.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/ffi-2.2.0/LICENSE",
+          "sha256": "0371d1da6a57fb791db29d29b95333429205f51f3cb2eb3a0c12d91838a38744"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/ffi/versions/2.2.0"
+    },
+    {
+      "name": "file",
+      "dependency": "transitive",
+      "pub_archive_sha256": "a3b4f84adafef897088c160faf7dfffb7696046cb13ae90b508c2cbc95d3b8d4",
+      "source": "hosted",
+      "version": "7.0.1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/file-7.0.1/LICENSE",
+          "sha256": "f6df86b1412172537273e8e80ee2fb8a66aa7307ce0b39ea5ddab47ca41b8c49"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/file/versions/7.0.1"
+    },
+    {
+      "name": "file_selector",
+      "dependency": "direct main",
+      "pub_archive_sha256": "bd15e43e9268db636b53eeaca9f56324d1622af30e5c34d6e267649758c84d9a",
+      "source": "hosted",
+      "version": "1.1.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/file_selector-1.1.0/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/file_selector/versions/1.1.0"
+    },
+    {
+      "name": "file_selector_android",
+      "dependency": "transitive",
+      "pub_archive_sha256": "d670cd0ce77a2e785b18d8b4d0a8d6a222d6a813ec9b7ddf2790a1b4fb6fa92c",
+      "source": "hosted",
+      "version": "0.5.2+11",
+      "license": "Apache-2.0",
+      "license_files": [
+        {
+          "file": "packages/file_selector_android-0.5.2+11/LICENSE",
+          "sha256": "8e139d4c7faa5e7a76752e743a745113f46e658071733bfae4914a04da12ae0e"
+        },
+        {
+          "file": "packages/file_selector_android-0.5.2+11/pigeons/copyright.txt",
+          "sha256": "8389b4e4116894c3d8b31c0619df9e131555acafdc9486b7e7db5bb483d2a957"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/file_selector_android/versions/0.5.2+11"
+    },
+    {
+      "name": "file_selector_ios",
+      "dependency": "transitive",
+      "pub_archive_sha256": "5b42ec0ef7626124b4624ea244341e9df780406793c204e89fa68a2e71af115c",
+      "source": "hosted",
+      "version": "0.5.3+7",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/file_selector_ios-0.5.3+7/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        },
+        {
+          "file": "packages/file_selector_ios-0.5.3+7/pigeons/copyright.txt",
+          "sha256": "8389b4e4116894c3d8b31c0619df9e131555acafdc9486b7e7db5bb483d2a957"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/file_selector_ios/versions/0.5.3+7"
+    },
+    {
+      "name": "file_selector_linux",
+      "dependency": "transitive",
+      "pub_archive_sha256": "da76400e7872ce7637ffdce12749ec24169c25f6195c28372208e65a24bcd2ab",
+      "source": "hosted",
+      "version": "0.9.4+1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/file_selector_linux-0.9.4+1/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        },
+        {
+          "file": "packages/file_selector_linux-0.9.4+1/pigeons/copyright.txt",
+          "sha256": "8389b4e4116894c3d8b31c0619df9e131555acafdc9486b7e7db5bb483d2a957"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/file_selector_linux/versions/0.9.4+1"
+    },
+    {
+      "name": "file_selector_macos",
+      "dependency": "transitive",
+      "pub_archive_sha256": "d785431f1910aac8a50e5c492cae912320158030a88703c67b9ef7f1f96fd7ba",
+      "source": "hosted",
+      "version": "0.9.5+2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/file_selector_macos-0.9.5+2/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        },
+        {
+          "file": "packages/file_selector_macos-0.9.5+2/pigeons/copyright.txt",
+          "sha256": "8389b4e4116894c3d8b31c0619df9e131555acafdc9486b7e7db5bb483d2a957"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/file_selector_macos/versions/0.9.5+2"
+    },
+    {
+      "name": "file_selector_platform_interface",
+      "dependency": "transitive",
+      "pub_archive_sha256": "35e0bd61ebcdb91a3505813b055b09b79dfdc7d0aee9c09a7ba59ae4bb13dc85",
+      "source": "hosted",
+      "version": "2.7.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/file_selector_platform_interface-2.7.0/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/file_selector_platform_interface/versions/2.7.0"
+    },
+    {
+      "name": "file_selector_web",
+      "dependency": "transitive",
+      "pub_archive_sha256": "73181fbc5257776d8ecaa6a94ab3c8e920ad143b9132a6d984a9271dfc6928d3",
+      "source": "hosted",
+      "version": "0.9.5",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/file_selector_web-0.9.5/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/file_selector_web/versions/0.9.5"
+    },
+    {
+      "name": "file_selector_windows",
+      "dependency": "transitive",
+      "pub_archive_sha256": "fbefc5fb92c6d3cbe8d284a2cd971b593bb07d2cd6da8557b81a862250b4acec",
+      "source": "hosted",
+      "version": "0.9.3+6",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/file_selector_windows-0.9.3+6/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        },
+        {
+          "file": "packages/file_selector_windows-0.9.3+6/pigeons/copyright.txt",
+          "sha256": "8389b4e4116894c3d8b31c0619df9e131555acafdc9486b7e7db5bb483d2a957"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/file_selector_windows/versions/0.9.3+6"
+    },
+    {
+      "name": "fixnum",
+      "dependency": "transitive",
+      "pub_archive_sha256": "b6dc7065e46c974bc7c5f143080a6764ec7a4be6da1285ececdc37be96de53be",
+      "source": "hosted",
+      "version": "1.1.1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/fixnum-1.1.1/LICENSE",
+          "sha256": "ff0b91d4f3c32b25cb6ec84985e8da89b0ba2a2b2f7eef353cda5e5423a20390"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/fixnum/versions/1.1.1"
+    },
+    {
+      "name": "flutter",
+      "dependency": "direct main",
+      "source": "sdk",
+      "version": "0.0.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/flutter-0.0.0/LICENSE",
+          "sha256": "a598db94b6290ffbe10b5ecf911057b6a943351c727fdda9e5f2891d68700a20"
+        }
+      ],
+      "source_url": "https://github.com/flutter/flutter"
+    },
+    {
+      "name": "flutter_libserialport",
+      "dependency": "direct main",
+      "pub_archive_sha256": "f24b5fe6f1821d1c1b3bf2be737ca53f6b0ae78657032a790aa00abb810c8759",
+      "source": "hosted",
+      "version": "0.6.0",
+      "license": "MIT wrapper; LGPL-3.0-or-later bundled native library",
+      "license_files": [
+        {
+          "file": "packages/flutter_libserialport-0.6.0/LICENSE",
+          "sha256": "22c06f74212faed5ba6ea1c5afc967ad0b1e214822fb466e8b8671a2dd673349"
+        },
+        {
+          "file": "packages/flutter_libserialport-0.6.0/third_party/libserialport/COPYING",
+          "sha256": "ea7d049c7705dc13afc202dd18e1827f3484f8212fd3fa7b82fc4a0c363432c9"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/flutter_libserialport/versions/0.6.0"
+    },
+    {
+      "name": "flutter_lints",
+      "dependency": "direct dev",
+      "pub_archive_sha256": "3105dc8492f6183fb076ccf1f351ac3d60564bff92e20bfc4af9cc1651f4e7e1",
+      "source": "hosted",
+      "version": "6.0.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/flutter_lints-6.0.0/LICENSE",
+          "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/flutter_lints/versions/6.0.0"
+    },
+    {
+      "name": "flutter_test",
+      "dependency": "direct dev",
+      "source": "sdk",
+      "version": "0.0.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/flutter_test-0.0.0/LICENSE",
+          "sha256": "a598db94b6290ffbe10b5ecf911057b6a943351c727fdda9e5f2891d68700a20",
+          "inherited_from": "Flutter SDK LICENSE"
+        }
+      ],
+      "source_url": "https://github.com/flutter/flutter"
+    },
+    {
+      "name": "flutter_web_plugins",
+      "dependency": "transitive",
+      "source": "sdk",
+      "version": "0.0.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/flutter_web_plugins-0.0.0/LICENSE",
+          "sha256": "a598db94b6290ffbe10b5ecf911057b6a943351c727fdda9e5f2891d68700a20",
+          "inherited_from": "Flutter SDK LICENSE"
+        }
+      ],
+      "source_url": "https://github.com/flutter/flutter"
+    },
+    {
+      "name": "glob",
+      "dependency": "transitive",
+      "pub_archive_sha256": "218aeb56050c714f62a3182775320dfa04602b55074873e24e31bbd39bda96fb",
+      "source": "hosted",
+      "version": "2.2.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/glob-2.2.0/LICENSE",
+          "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/glob/versions/2.2.0"
+    },
+    {
+      "name": "hooks",
+      "dependency": "transitive",
+      "pub_archive_sha256": "eaac480a35ec0814146c2c48d96aaa829e0e44a7662c88ae84c9edf4bc35651f",
+      "source": "hosted",
+      "version": "2.2.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/hooks-2.2.0/LICENSE",
+          "sha256": "21ae23b0b9ff67a2dc75ab085d1e8db8ac548c5faf370af17f28dd2ef3b52b7b"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/hooks/versions/2.2.0"
+    },
+    {
+      "name": "http",
+      "dependency": "transitive",
+      "pub_archive_sha256": "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412",
+      "source": "hosted",
+      "version": "1.6.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/http-1.6.0/LICENSE",
+          "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/http/versions/1.6.0"
+    },
+    {
+      "name": "http_parser",
+      "dependency": "transitive",
+      "pub_archive_sha256": "178d74305e7866013777bab2c3d8726205dc5a4dd935297175b19a23a2e66571",
+      "source": "hosted",
+      "version": "4.1.2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/http_parser-4.1.2/LICENSE",
+          "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/http_parser/versions/4.1.2"
+    },
+    {
+      "name": "jni",
+      "dependency": "transitive",
+      "pub_archive_sha256": "6b9ca0602fef0230e83149afbe3f9f8227e94f2bbe84a1da4f14d699742f402d",
+      "source": "hosted",
+      "version": "1.1.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/jni-1.1.0/LICENSE",
+          "sha256": "08a004aa8956c3cf3b24f7f69c966247233953e18e6afaa61191ea47b7eb70f6"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/jni/versions/1.1.0"
+    },
+    {
+      "name": "jni_flutter",
+      "dependency": "transitive",
+      "pub_archive_sha256": "0dd33d67797560f66e961a6053882d4df54bd345bf063b8fe7ea133f7ad8b191",
+      "source": "hosted",
+      "version": "1.0.4+1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/jni_flutter-1.0.4+1/LICENSE",
+          "sha256": "b1fcb475d67817411f335ac92872507011e574c4cb29cfdaaf7707b75641932c"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/jni_flutter/versions/1.0.4+1"
+    },
+    {
+      "name": "jni_util",
+      "dependency": "transitive",
+      "pub_archive_sha256": "1ba86da04a5f2bf18fde2edb235587e70c5b0fc5bd4ba955f46b00942c3fc35f",
+      "source": "hosted",
+      "version": "1.0.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/jni_util-1.0.0/LICENSE",
+          "sha256": "b1fcb475d67817411f335ac92872507011e574c4cb29cfdaaf7707b75641932c"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/jni_util/versions/1.0.0"
+    },
+    {
+      "name": "json_annotation",
+      "dependency": "transitive",
+      "pub_archive_sha256": "2a743920d81b7910627f68ee2c9ac1fc0bfee32b9fc3403587d7c6791ca12f80",
+      "source": "hosted",
+      "version": "4.12.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/json_annotation-4.12.0/LICENSE",
+          "sha256": "143839f62c9b7f88143ea9f688361c27050888acde7696b34e04414bd254fafc"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/json_annotation/versions/4.12.0"
+    },
+    {
+      "name": "leak_tracker",
+      "dependency": "transitive",
+      "pub_archive_sha256": "33e2e26bdd85a0112ec15400c8cbffea70d0f9c3407491f672a2fad47915e2de",
+      "source": "hosted",
+      "version": "11.0.2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/leak_tracker-11.0.2/LICENSE",
+          "sha256": "08a004aa8956c3cf3b24f7f69c966247233953e18e6afaa61191ea47b7eb70f6"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/leak_tracker/versions/11.0.2"
+    },
+    {
+      "name": "leak_tracker_flutter_testing",
+      "dependency": "transitive",
+      "pub_archive_sha256": "1dbc140bb5a23c75ea9c4811222756104fbcd1a27173f0c34ca01e16bea473c1",
+      "source": "hosted",
+      "version": "3.0.10",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/leak_tracker_flutter_testing-3.0.10/LICENSE",
+          "sha256": "08a004aa8956c3cf3b24f7f69c966247233953e18e6afaa61191ea47b7eb70f6"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/leak_tracker_flutter_testing/versions/3.0.10"
+    },
+    {
+      "name": "leak_tracker_testing",
+      "dependency": "transitive",
+      "pub_archive_sha256": "8d5a2d49f4a66b49744b23b018848400d23e54caf9463f4eb20df3eb8acb2eb1",
+      "source": "hosted",
+      "version": "3.0.2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/leak_tracker_testing-3.0.2/LICENSE",
+          "sha256": "08a004aa8956c3cf3b24f7f69c966247233953e18e6afaa61191ea47b7eb70f6"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/leak_tracker_testing/versions/3.0.2"
+    },
+    {
+      "name": "libserialport",
+      "dependency": "transitive",
+      "pub_archive_sha256": "392e1592def65282429832ec66fa25e9e163d3b37716b97691482e2406720727",
+      "source": "hosted",
+      "version": "0.3.0+1",
+      "license": "LGPL-3.0-or-later",
+      "license_files": [
+        {
+          "file": "packages/libserialport-0.3.0+1/LICENSE",
+          "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/libserialport/versions/0.3.0+1"
+    },
+    {
+      "name": "lints",
+      "dependency": "transitive",
+      "pub_archive_sha256": "12f842a479589fea194fe5c5a3095abc7be0c1f2ddfa9a0e76aed1dbd26a87df",
+      "source": "hosted",
+      "version": "6.1.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/lints-6.1.0/LICENSE",
+          "sha256": "421fe78c3b5df297f8b4ab2c74f2450a274ee6d245a113091f6b9f90570af193"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/lints/versions/6.1.0"
+    },
+    {
+      "name": "logging",
+      "dependency": "transitive",
+      "pub_archive_sha256": "c8245ada5f1717ed44271ed1c26b8ce85ca3228fd2ffdb75468ab01979309d61",
+      "source": "hosted",
+      "version": "1.3.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/logging-1.3.0/LICENSE",
+          "sha256": "dfb09c74e29386cd3e2719f32d4995d59526179753931d31840757c77fbf2791"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/logging/versions/1.3.0"
+    },
+    {
+      "name": "matcher",
+      "dependency": "transitive",
+      "pub_archive_sha256": "31bd099b47c10cd1aeb55146a2d46ce0277630ecef3f7dae54ad7873f36696cd",
+      "source": "hosted",
+      "version": "0.12.20",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/matcher-0.12.20/LICENSE",
+          "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/matcher/versions/0.12.20"
+    },
+    {
+      "name": "material_color_utilities",
+      "dependency": "transitive",
+      "pub_archive_sha256": "9c337007e82b1889149c82ed242ed1cb24a66044e30979c44912381e9be4c48b",
+      "source": "hosted",
+      "version": "0.13.0",
+      "license": "Apache-2.0",
+      "license_files": [
+        {
+          "file": "packages/material_color_utilities-0.13.0/LICENSE",
+          "sha256": "d103f246ef4c18dab8af0c1dcf6a8af884e5cff554da7261a48ac43c17d98f2e"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/material_color_utilities/versions/0.13.0"
+    },
+    {
+      "name": "meta",
+      "dependency": "transitive",
+      "pub_archive_sha256": "307249ce4ff29d58a18e97f6345f539382eb9c9c29ecda628900f31de0443dd9",
+      "source": "hosted",
+      "version": "1.19.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/meta-1.19.0/LICENSE",
+          "sha256": "b71519245009a3b8f126196a5408ec031e216e8e0d985085958c6543f82a8a2a"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/meta/versions/1.19.0"
+    },
+    {
+      "name": "native_toolchain_c",
+      "dependency": "transitive",
+      "pub_archive_sha256": "90eaad8059ebc2004a63810a4696ea9acdb02473e47ed3b6b3bafb100ac77e31",
+      "source": "hosted",
+      "version": "0.19.5",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/native_toolchain_c-0.19.5/LICENSE",
+          "sha256": "aa81abb1ac43e40d2f5a606385edd37e974a5858d4109f7f439dd43d964487a7"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/native_toolchain_c/versions/0.19.5"
+    },
+    {
+      "name": "objective_c",
+      "dependency": "transitive",
+      "pub_archive_sha256": "5c80c2ad6e2c0397de5db38c6d653e69616a3397e13aa7633bf39eb668f2041b",
+      "source": "hosted",
+      "version": "9.6.2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/objective_c-9.6.2/LICENSE",
+          "sha256": "1cda25a8de6880c5338de0b4a06ee89e8537c213eb1379c16a4c035bfd198b5c"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/objective_c/versions/9.6.2"
+    },
+    {
+      "name": "package_config",
+      "dependency": "transitive",
+      "pub_archive_sha256": "ffcf4cf3d6c0b74ac43708d9f56625506e8a68aa935abe9d267a7330f320eb5d",
+      "source": "hosted",
+      "version": "3.0.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/package_config-3.0.0/LICENSE",
+          "sha256": "0371d1da6a57fb791db29d29b95333429205f51f3cb2eb3a0c12d91838a38744"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/package_config/versions/3.0.0"
+    },
+    {
+      "name": "path",
+      "dependency": "transitive",
+      "pub_archive_sha256": "75cca69d1490965be98c73ceaea117e8a04dd21217b37b292c9ddbec0d955bc5",
+      "source": "hosted",
+      "version": "1.9.1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/path-1.9.1/LICENSE",
+          "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/path/versions/1.9.1"
+    },
+    {
+      "name": "path_provider",
+      "dependency": "direct main",
+      "pub_archive_sha256": "a7f4874f987173da295a61c181b8ee71dab59b332a486b391babf26a1b884825",
+      "source": "hosted",
+      "version": "2.1.6",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/path_provider-2.1.6/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/path_provider/versions/2.1.6"
+    },
+    {
+      "name": "path_provider_android",
+      "dependency": "transitive",
+      "pub_archive_sha256": "69cbd515a62b94d32a7944f086b2f82b4ac40a1d45bebfc00813a430ab2dabcd",
+      "source": "hosted",
+      "version": "2.3.1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/path_provider_android-2.3.1/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/path_provider_android/versions/2.3.1"
+    },
+    {
+      "name": "path_provider_foundation",
+      "dependency": "transitive",
+      "pub_archive_sha256": "2a376b7d6392d80cd3705782d2caa734ca4727776db0b6ec36ef3f1855197699",
+      "source": "hosted",
+      "version": "2.6.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/path_provider_foundation-2.6.0/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/path_provider_foundation/versions/2.6.0"
+    },
+    {
+      "name": "path_provider_linux",
+      "dependency": "transitive",
+      "pub_archive_sha256": "58c2005f147315b11e9b4a7bc889cd5203e250cba8e3f012dae259b4972b5c16",
+      "source": "hosted",
+      "version": "2.2.2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/path_provider_linux-2.2.2/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/path_provider_linux/versions/2.2.2"
+    },
+    {
+      "name": "path_provider_platform_interface",
+      "dependency": "transitive",
+      "pub_archive_sha256": "484838772624c3a4b94f1e44a3e19897fee738f2d5c4ce448443b0417f7c9dda",
+      "source": "hosted",
+      "version": "2.1.3",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/path_provider_platform_interface-2.1.3/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/path_provider_platform_interface/versions/2.1.3"
+    },
+    {
+      "name": "path_provider_windows",
+      "dependency": "transitive",
+      "pub_archive_sha256": "bd6f00dbd873bfb70d0761682da2b3a2c2fccc2b9e84c495821639601d81afe7",
+      "source": "hosted",
+      "version": "2.3.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/path_provider_windows-2.3.0/LICENSE",
+          "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/path_provider_windows/versions/2.3.0"
+    },
+    {
+      "name": "platform",
+      "dependency": "transitive",
+      "pub_archive_sha256": "a36d119c13416516a7b5913fbe8af8531e11633d784c550b2125f76c758524ec",
+      "source": "hosted",
+      "version": "3.2.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/platform-3.2.0/LICENSE",
+          "sha256": "143839f62c9b7f88143ea9f688361c27050888acde7696b34e04414bd254fafc"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/platform/versions/3.2.0"
+    },
+    {
+      "name": "plugin_platform_interface",
+      "dependency": "transitive",
+      "pub_archive_sha256": "4820fbfdb9478b1ebae27888254d445073732dae3d6ea81f0b7e06d5dedc3f02",
+      "source": "hosted",
+      "version": "2.1.8",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/plugin_platform_interface-2.1.8/LICENSE",
+          "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/plugin_platform_interface/versions/2.1.8"
+    },
+    {
+      "name": "process",
+      "dependency": "transitive",
+      "pub_archive_sha256": "4242ba3508d37e01808bdf71ad1d5bb93a8d671bf2e7450e6b1b353fb0808891",
+      "source": "hosted",
+      "version": "5.0.6",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/process-5.0.6/LICENSE",
+          "sha256": "5f018bbc25a55406d7a4e1d3229135439e315210b0050ca56dbb367a4934e85d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/process/versions/5.0.6"
+    },
+    {
+      "name": "pub_semver",
+      "dependency": "transitive",
+      "pub_archive_sha256": "261236774e8b1d69cfc6b9eabbc96c40f25e7a2d6b171f3385d4f65d5734fb24",
+      "source": "hosted",
+      "version": "2.2.1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/pub_semver-2.2.1/LICENSE",
+          "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/pub_semver/versions/2.2.1"
+    },
+    {
+      "name": "record_use",
+      "dependency": "transitive",
+      "pub_archive_sha256": "1cb8564af8d43b464294411db9217f5ec04891c6f22ee2c32d73ae05e88a6bd2",
+      "source": "hosted",
+      "version": "1.1.1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/record_use-1.1.1/LICENSE",
+          "sha256": "1cda25a8de6880c5338de0b4a06ee89e8537c213eb1379c16a4c035bfd198b5c"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/record_use/versions/1.1.1"
+    },
+    {
+      "name": "screen_retriever",
+      "dependency": "transitive",
+      "pub_archive_sha256": "ace919117a7520c13a50a6259e60c4a0d4cbe98809468792a91b5c5adada2aa6",
+      "source": "hosted",
+      "version": "0.2.2",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/screen_retriever-0.2.2/LICENSE",
+          "sha256": "4c275c4e1ab3ffb97508c3c66a87db1c6e4f5d0233205fff8ca57ac35d20199f"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/screen_retriever/versions/0.2.2"
+    },
+    {
+      "name": "screen_retriever_linux",
+      "dependency": "transitive",
+      "pub_archive_sha256": "7b52006a5ceae1f3d5af7f77188c3290d6e7d8ded16d99809bea84967c65c257",
+      "source": "hosted",
+      "version": "0.2.2",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/screen_retriever_linux-0.2.2/LICENSE",
+          "sha256": "4c275c4e1ab3ffb97508c3c66a87db1c6e4f5d0233205fff8ca57ac35d20199f"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/screen_retriever_linux/versions/0.2.2"
+    },
+    {
+      "name": "screen_retriever_macos",
+      "dependency": "transitive",
+      "pub_archive_sha256": "a1489b99cce597c45a54b9aae1cd94c8d4705353b7e0bb2457a6e4de44e0ad8a",
+      "source": "hosted",
+      "version": "0.2.2",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/screen_retriever_macos-0.2.2/LICENSE",
+          "sha256": "4c275c4e1ab3ffb97508c3c66a87db1c6e4f5d0233205fff8ca57ac35d20199f"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/screen_retriever_macos/versions/0.2.2"
+    },
+    {
+      "name": "screen_retriever_platform_interface",
+      "dependency": "transitive",
+      "pub_archive_sha256": "94a5535277510a63184ca178ce12a1449bc0b38618879aa1c18bf57369c5064a",
+      "source": "hosted",
+      "version": "0.2.2",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/screen_retriever_platform_interface-0.2.2/LICENSE",
+          "sha256": "4c275c4e1ab3ffb97508c3c66a87db1c6e4f5d0233205fff8ca57ac35d20199f"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/screen_retriever_platform_interface/versions/0.2.2"
+    },
+    {
+      "name": "screen_retriever_windows",
+      "dependency": "transitive",
+      "pub_archive_sha256": "dafc6922b0bfbf1d48cf3ccbf519b4fff47bdcb820da1728ea6db675fecc9324",
+      "source": "hosted",
+      "version": "0.2.2",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/screen_retriever_windows-0.2.2/LICENSE",
+          "sha256": "4c275c4e1ab3ffb97508c3c66a87db1c6e4f5d0233205fff8ca57ac35d20199f"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/screen_retriever_windows/versions/0.2.2"
+    },
+    {
+      "name": "sky_engine",
+      "dependency": "transitive",
+      "source": "sdk",
+      "version": "0.0.0",
+      "license": "Flutter engine bundled notices (multiple licenses)",
+      "license_files": [
+        {
+          "file": "packages/sky_engine-0.0.0/LICENSE",
+          "sha256": "3c0040023a5789bf56d6bf41fd44f08b21758523d41f128fb7dd6beb398d1191"
+        }
+      ],
+      "source_url": "https://github.com/flutter/flutter"
+    },
+    {
+      "name": "source_span",
+      "dependency": "transitive",
+      "pub_archive_sha256": "56a02f1f4cd1a2d96303c0144c93bd6d909eea6bee6bf5a0e0b685edbd4c47ab",
+      "source": "hosted",
+      "version": "1.10.2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/source_span-1.10.2/LICENSE",
+          "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/source_span/versions/1.10.2"
+    },
+    {
+      "name": "sqlite3",
+      "dependency": "direct main",
+      "pub_archive_sha256": "5340531ad17f386ae444873f643f281060b6238cc702edeee6b1e90bc4c6874e",
+      "source": "hosted",
+      "version": "3.8.0",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/sqlite3-3.8.0/LICENSE",
+          "sha256": "67e5d73a3a0c6e41f33d688a672b1161bf7f16e04da9ae48a7a14f1ba7436a4d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/sqlite3/versions/3.8.0"
+    },
+    {
+      "name": "stack_trace",
+      "dependency": "transitive",
+      "pub_archive_sha256": "277654b3034d17ac6f9f1cb5595db011b1d5d41e8806866db28e0abaa101c490",
+      "source": "hosted",
+      "version": "1.12.2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/stack_trace-1.12.2/LICENSE",
+          "sha256": "ff0b91d4f3c32b25cb6ec84985e8da89b0ba2a2b2f7eef353cda5e5423a20390"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/stack_trace/versions/1.12.2"
+    },
+    {
+      "name": "stream_channel",
+      "dependency": "transitive",
+      "pub_archive_sha256": "969e04c80b8bcdf826f8f16579c7b14d780458bd97f56d107d3950fdbeef059d",
+      "source": "hosted",
+      "version": "2.1.4",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/stream_channel-2.1.4/LICENSE",
+          "sha256": "ff15faa32a2e638107b7789592b14426162a75ba620044ee2340a20ec6ce5e73"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/stream_channel/versions/2.1.4"
+    },
+    {
+      "name": "string_scanner",
+      "dependency": "transitive",
+      "pub_archive_sha256": "921cd31725b72fe181906c6a94d987c78e3b98c2e205b397ea399d4054872b43",
+      "source": "hosted",
+      "version": "1.4.1",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/string_scanner-1.4.1/LICENSE",
+          "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/string_scanner/versions/1.4.1"
+    },
+    {
+      "name": "term_glyph",
+      "dependency": "transitive",
+      "pub_archive_sha256": "7f554798625ea768a7518313e58f83891c7f5024f88e46e7182a4558850a4b8e",
+      "source": "hosted",
+      "version": "1.2.2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/term_glyph-1.2.2/LICENSE",
+          "sha256": "ea97a7558a7bd7cee4e2355f7529e3cbebb0dcbb546ddb9a90f10c9eb6b08da5"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/term_glyph/versions/1.2.2"
+    },
+    {
+      "name": "test_api",
+      "dependency": "transitive",
+      "pub_archive_sha256": "2a122cbe059f8b610d3a5415f42e255b6c17b1f21eee1d960f31080237fb4f11",
+      "source": "hosted",
+      "version": "0.7.12",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/test_api-0.7.12/LICENSE",
+          "sha256": "ff1b9f0df9036c04be424b1e3ce12789bea880ad5ffc3a48e069ae2d40a087a4"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/test_api/versions/0.7.12"
+    },
+    {
+      "name": "timezone",
+      "dependency": "direct main",
+      "pub_archive_sha256": "9f4e5a1a0e4fef7dd3424842c0575db01bfb7a11730e8d55753fcd5c5c98767b",
+      "source": "hosted",
+      "version": "0.11.2",
+      "license": "BSD-2-Clause",
+      "license_files": [
+        {
+          "file": "packages/timezone-0.11.2/LICENSE",
+          "sha256": "d8f160d6dcdd4ec77522646d04c139d89d55910d6852792d2b441625763c012f"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/timezone/versions/0.11.2"
+    },
+    {
+      "name": "typed_data",
+      "dependency": "transitive",
+      "pub_archive_sha256": "f9049c039ebfeb4cf7a7104a675823cd72dba8297f264b6637062516699fa006",
+      "source": "hosted",
+      "version": "1.4.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/typed_data-1.4.0/LICENSE",
+          "sha256": "ff15faa32a2e638107b7789592b14426162a75ba620044ee2340a20ec6ce5e73"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/typed_data/versions/1.4.0"
+    },
+    {
+      "name": "uuid",
+      "dependency": "direct main",
+      "pub_archive_sha256": "9b129329f58692f6e6578329498a8fe9fbe98f090beb764ffbb8ee2eadd01dcd",
+      "source": "hosted",
+      "version": "4.6.0",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/uuid-4.6.0/LICENSE",
+          "sha256": "ad3e5523e51004e94ba9ce728805b1b4242dbccdb65e62b523800e35a8a7cfdc"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/uuid/versions/4.6.0"
+    },
+    {
+      "name": "vector_math",
+      "dependency": "transitive",
+      "pub_archive_sha256": "1d774bbdf6b72a0b12122fc1560c9c2d2a67db5a4a4cc2bd8a5c990ab20e3188",
+      "source": "hosted",
+      "version": "2.4.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/vector_math-2.4.0/LICENSE",
+          "sha256": "420f7739f169097f0aad1242045169cd643c8f1d94e62866fad265ae4c369b7d"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/vector_math/versions/2.4.0"
+    },
+    {
+      "name": "vm_service",
+      "dependency": "transitive",
+      "pub_archive_sha256": "89b11d62e1040ee681af3b4f1c97a803ecbf010c6e8b9c5896ee5b08c3bf7b78",
+      "source": "hosted",
+      "version": "15.4.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/vm_service-15.4.0/LICENSE",
+          "sha256": "ad6a71997da90924b2cfb1fb47ec46537f70faf469efe016168794ae45ed6888"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/vm_service/versions/15.4.0"
+    },
+    {
+      "name": "web",
+      "dependency": "direct main",
+      "pub_archive_sha256": "e119e82ac4795c7925103b7cf3768191f33941b99e7ccffbd6c645201d9f606b",
+      "source": "hosted",
+      "version": "1.1.2",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/web-1.1.2/LICENSE",
+          "sha256": "aa913ff50d7542eb8cc35b9f48a80928ac6819ba9057f85d424655e3e8dc271c"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/web/versions/1.1.2"
+    },
+    {
+      "name": "window_manager",
+      "dependency": "direct main",
+      "pub_archive_sha256": "05c231fd7b23d2380f14c5cc10b7b93d60d4fa4a2fb4e0f032de27e44b5560e9",
+      "source": "hosted",
+      "version": "0.5.2",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/window_manager-0.5.2/LICENSE",
+          "sha256": "516e1f470fd0e4c5c6cf02b6876153a9145283660a5de03fe9812b207dc34db5"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/window_manager/versions/0.5.2"
+    },
+    {
+      "name": "xdg_directories",
+      "dependency": "transitive",
+      "pub_archive_sha256": "7a3f37b05d989967cdddcbb571f1ea834867ae2faa29725fd085180e0883aa15",
+      "source": "hosted",
+      "version": "1.1.0",
+      "license": "BSD-3-Clause",
+      "license_files": [
+        {
+          "file": "packages/xdg_directories-1.1.0/LICENSE",
+          "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/xdg_directories/versions/1.1.0"
+    },
+    {
+      "name": "yaml",
+      "dependency": "transitive",
+      "pub_archive_sha256": "f67cdd8e07d3c6329146aaef1ba043542b3134c12489f553ca9a7435d1068aea",
+      "source": "hosted",
+      "version": "3.1.4",
+      "license": "MIT",
+      "license_files": [
+        {
+          "file": "packages/yaml-3.1.4/LICENSE",
+          "sha256": "d47b93335401b052d79a2f5a3710e4cf7b5aed782faedf84d40fbdd6eb934ec7"
+        }
+      ],
+      "source_url": "https://pub.dev/packages/yaml/versions/3.1.4"
+    }
+  ],
+  "corresponding_sources": [
+    {
+      "component": "macOS native libserialport",
+      "version": "0.1.1",
+      "file": "sources/libserialport-0.1.1-upstream.tar.gz",
+      "sha256": "4e3573e3bdbb6b0a872f32c4826d1b6b630dcc3eeb5f05d0501bb79d738a09ea",
+      "source_url": "https://codeload.github.com/sigrokproject/libserialport/tar.gz/refs/tags/libserialport-0.1.1",
+      "upstream_tag": "libserialport-0.1.1",
+      "upstream_commit": "348a6d353af8ac142f68fbf9fe0f4d070448d945",
+      "license": "LGPL-3.0-or-later"
+    },
+    {
+      "component": "flutter_libserialport",
+      "version": "0.6.0",
+      "file": "sources/flutter_libserialport-0.6.0-resolved-source.tar.gz",
+      "sha256": "3f1017359869abd99cf7c3c8c5bd59d427f952db4668380e86af22c034af5c9d",
+      "pub_archive_sha256": "f24b5fe6f1821d1c1b3bf2be737ca53f6b0ae78657032a790aa00abb810c8759",
+      "source_url": "https://pub.dev/api/archives/flutter_libserialport-0.6.0.tar.gz",
+      "license": "MIT wrapper with LGPL-3.0-or-later native third_party/libserialport"
+    },
+    {
+      "component": "libserialport",
+      "version": "0.3.0+1",
+      "file": "sources/libserialport-0.3.0+1-resolved-source.tar.gz",
+      "sha256": "c92dff266d44a28ccf8c1d9507ee781bb5b14429a4f7c62c5aff6fb00a6100fc",
+      "pub_archive_sha256": "392e1592def65282429832ec66fa25e9e163d3b37716b97691482e2406720727",
+      "source_url": "https://pub.dev/api/archives/libserialport-0.3.0+1.tar.gz",
+      "license": "LGPL-3.0-or-later"
+    }
+  ],
+  "flutter_notices_sha256": "f52576bf6ca486710fe93f070d8fe71d4323c5ada3408673b43efc45c973e4b4"
+}

@@ -1,0 +1,25 @@
+Portly
+Copyright 2026 Portly contributors
+
+Portly's original source code is licensed under the Apache License, Version 2.0.
+See LICENSE for the complete terms.
+
+Portly includes third-party software and fonts under their own licenses.
+These components are not relicensed by Portly's Apache-2.0 license.
+See THIRD_PARTY_NOTICES.md and the accompanying third_party_licenses directory
+for original license texts, copyright notices, corresponding source archives,
+checksums, and instructions for rebuilding or replacing LGPL components.
+
+In particular, Portly uses the LGPL-3.0-or-later Dart libserialport package and
+the LGPL-3.0-or-later native libserialport library. Their use and distribution
+are governed by the GNU LGPL, with the GNU GPL terms it incorporates.
+Copies of both licenses and the corresponding library sources accompany this
+distribution. Modification of these libraries, and reverse engineering for
+debugging such modifications, are not prohibited by Portly's terms.
+
+Flutter and Dart: Copyright The Flutter Authors / The Dart project authors.
+The complete generated notices are in third_party_licenses/FLUTTER-NOTICES.txt.
+
+JetBrains Mono: Copyright 2020 The JetBrains Mono Project Authors.
+Distributed under the SIL Open Font License 1.1; see
+third_party_licenses/fonts/JetBrainsMono-OFL.txt.

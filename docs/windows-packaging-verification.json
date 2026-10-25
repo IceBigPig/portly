@@ -1,0 +1,53 @@
+{
+  "verifiedAt": "2026-10-25",
+  "host": "macOS arm64",
+  "flutterVersion": "3.47.7",
+  "engineRevision": "deb287481e3ce9468f3434937ced4240a70539ca",
+  "powershellVersion": "7.5.4",
+  "powershellTarSha256": "3aaadd7ca62f1e4dbe59145b6af24e926d61f8da8a4782bc535e500c184135f0",
+  "syntaxAndFixtureChecksPassed": 23,
+  "jniDisabledCmakeConfigurePassed": true,
+  "windowsArm64DartArtifactHeadStatus": 200,
+  "nativeAssets": [
+    {
+      "file": "flutter_windows.dll",
+      "architecture": "x64",
+      "machine": "0x8664",
+      "bytes": 21274112,
+      "sha256": "7b03815958c49d72385be497fbd0eb1bb2ae27d24989d6c9aee83eafbd93e9d3",
+      "source": "https://storage.googleapis.com/flutter_infra_release/flutter/deb287481e3ce9468f3434937ced4240a70539ca/windows-x64-release/windows-x64-flutter.zip",
+      "pinnedPackageHashVerified": false
+    },
+    {
+      "file": "sqlite3.dll",
+      "architecture": "x64",
+      "machine": "0x8664",
+      "bytes": 1729024,
+      "sha256": "3a29878d0936510af0f563dfc7668c561c92f7ebe1d9fef95975f721dc01b590",
+      "source": "https://github.com/simolus3/sqlite3.dart/releases/download/sqlite3-3.8.0/sqlite3.x64.windows.dll",
+      "pinnedPackageHashVerified": true
+    },
+    {
+      "file": "flutter_windows.dll",
+      "architecture": "arm64",
+      "machine": "0xAA64",
+      "bytes": 19444736,
+      "sha256": "469803411a76a3f461009818292645b102af967b2fc18bc6690a6c8574c2c7f0",
+      "source": "https://storage.googleapis.com/flutter_infra_release/flutter/deb287481e3ce9468f3434937ced4240a70539ca/windows-arm64-release/windows-arm64-flutter.zip",
+      "pinnedPackageHashVerified": false
+    },
+    {
+      "file": "sqlite3.dll",
+      "architecture": "arm64",
+      "machine": "0xAA64",
+      "bytes": 1618432,
+      "sha256": "cca57dbda2aa0c22e410bb2b670bc5961c3db7c9c14b638adb48f95387a7cd0f",
+      "source": "https://github.com/simolus3/sqlite3.dart/releases/download/sqlite3-3.8.0/sqlite3.arm64.windows.dll",
+      "pinnedPackageHashVerified": true
+    }
+  ],
+  "windowsAppBuildPerformed": false,
+  "innoCompilerRunPerformed": false,
+  "windowsInstallOrRuntimeTestPerformed": false,
+  "hardwareSerialTestPerformed": false
+}

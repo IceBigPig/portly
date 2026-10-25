@@ -1,0 +1,154 @@
+name: Release packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      create_draft_release:
+        description: Attach all verified packages to a GitHub draft release
+        type: boolean
+        default: false
+  push:
+    tags: ['v*']
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  version:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: version
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, re
+          match = re.search(r'^version:\s*(\d+\.\d+\.\d+)\+\d+\s*$', pathlib.Path('pubspec.yaml').read_text(), re.M)
+          if not match:
+              raise SystemExit('pubspec.yaml must contain a stable version and build number')
+          version, tag = match[1], 'v' + match[1]
+          if os.environ['REF_TYPE'] == 'tag' and os.environ['REF_NAME'] != tag:
+              raise SystemExit(f'Tag must match pubspec.yaml: {tag}')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'version={version}\ntag={tag}\n')
+          PY
+
+  macos:
+    needs: version
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require an Apple Silicon runner
+        run: test "$(uname -m)" = arm64
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          architecture: arm64
+          cache: true
+      - name: Native build dependencies
+        run: |
+          brew list automake >/dev/null || brew install automake
+          brew list libtool >/dev/null || brew install libtool
+          pod --version
+      - run: flutter pub get --enforce-lockfile
+      - run: dart analyze lib test tool/stress_main.dart tool/capture_desktop_ui_test.dart
+      - run: flutter test --reporter expanded
+      - name: Build and verify Apple Silicon DMG and ZIP
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        run: ./tool/package-macos.sh --arch arm64 --version "$RELEASE_VERSION" --output-dir dist/macos
+      - name: Package the complete corresponding source
+        run: python3 tool/package-source.py --output-dir dist/source
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-macos-arm64-and-source
+          path: |
+            dist/macos/*
+            dist/source/*
+          if-no-files-found: error
+          retention-days: 30
+
+  windows:
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            arch: x64
+          - os: windows-11-arm
+            arch: arm64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 50
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bootstrap a clean native Flutter and Dart SDK
+        env:
+          TARGET_ARCH: ${{ matrix.arch }}
+        run: ./tool/setup-windows-flutter.ps1 -Architecture $env:TARGET_ARCH -Destination "$env:RUNNER_TEMP/flutter-$env:TARGET_ARCH"
+      - run: flutter pub get --enforce-lockfile
+      - run: dart analyze lib test
+      - run: flutter test --reporter expanded
+      - run: ./tool/windows/test-packaging.ps1
+      - name: Build and verify installer and portable ZIP
+        env:
+          TARGET_ARCH: ${{ matrix.arch }}
+        run: ./tool/package-windows.ps1 -Architecture $env:TARGET_ARCH -OutputDirectory "dist/windows/$env:TARGET_ARCH"
+      - name: Install, start, close, and uninstall on the native target
+        env:
+          TARGET_ARCH: ${{ matrix.arch }}
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        run: ./tool/windows/smoke-install.ps1 -Architecture $env:TARGET_ARCH -Installer "dist/windows/$env:TARGET_ARCH/Portly-$env:RELEASE_VERSION-windows-$env:TARGET_ARCH-setup.exe" -ReportPath "dist/windows/$env:TARGET_ARCH/Portly-$env:RELEASE_VERSION-windows-$env:TARGET_ARCH-smoke.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-windows-${{ matrix.arch }}
+          path: dist/windows/${{ matrix.arch }}/*
+          if-no-files-found: error
+          retention-days: 30
+
+  draft:
+    if: github.event_name == 'push' || inputs.create_draft_release
+    needs: [version, macos, windows]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          merge-multiple: true
+          path: release-assets
+      - name: Verify checksums before attaching
+        run: python3 tool/verify-release-assets.py release-assets
+      - name: Create or update a draft only
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ needs.version.outputs.tag }}
+        run: |
+          if gh release view "$RELEASE_TAG" --json isDraft >/tmp/portly-release-state.json 2>/dev/null; then
+            python3 - <<'PY'
+          import json
+          if not json.load(open('/tmp/portly-release-state.json'))['isDraft']:
+              raise SystemExit('Refusing to replace assets on an already published release')
+          PY
+          else
+            gh release create "$RELEASE_TAG" --target "$GITHUB_SHA" --draft --title "Portly $RELEASE_TAG" --notes-file docs/RELEASE_NOTES.md
+          fi
+          gh release upload "$RELEASE_TAG" release-assets/* --clobber

@@ -1,0 +1,10 @@
+* text=auto eol=lf
+third_party_licenses/** -text -whitespace
+assets/fonts/OFL.txt -text -whitespace
+*.tar.gz binary
+*.zip binary
+*.png binary
+*.ico binary
+*.icns binary
+*.ttf binary
+*.dmg binary
