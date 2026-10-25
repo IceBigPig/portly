@@ -28,6 +28,19 @@ class _GatedStorage extends AppStorage {
   void close() {}
 }
 
+Future<void> _shutdown(AppModel model) async {
+  await model.shutdown();
+  model.dispose();
+  await model.storage.closed;
+  expect(model.storage.closeError, isEmpty);
+}
+
+Future<void> _close(AppStorage storage) async {
+  storage.close();
+  await storage.closed;
+  expect(storage.closeError, isEmpty);
+}
+
 void main() {
   test(
     'Log limits restore from SQLite and capture never restarts automatically',
@@ -59,7 +72,7 @@ void main() {
       first.current.addLog(LogEntry('RX', [65, 66]));
       await first.save();
       await first.current.recorder.stop();
-      first.dispose();
+      await _shutdown(first);
       final before = Directory(logDirectory)
           .listSync()
           .whereType<File>()
@@ -86,7 +99,7 @@ void main() {
         before,
       );
       expect(errors, isEmpty);
-      second.dispose();
+      await _shutdown(second);
       await temp.delete(recursive: true);
     },
   );
@@ -230,7 +243,7 @@ void main() {
         ConnectionConfig(name: '测试服务器', kind: ConnectionKind.tcpServer),
       );
       await first.save();
-      first.dispose();
+      await _shutdown(first);
       final second = AppModel();
       await second.initialize(storagePath: path);
       expect(second.current.draft.crc, true);
@@ -239,7 +252,7 @@ void main() {
       expect(second.current.connected, false);
       expect(second.current.running, false);
       expect(second.current.loop, false);
-      second.dispose();
+      await _shutdown(second);
       await temp.delete(recursive: true);
     },
   );
@@ -270,7 +283,7 @@ void main() {
             .where((f) => f.path.contains('.import-')),
         isEmpty,
       );
-      model.dispose();
+      await _shutdown(model);
       await temp.delete(recursive: true);
     },
   );
@@ -281,18 +294,23 @@ void main() {
       final store = AppStorage();
       await store.open(path: '${temp.path}/app.sqlite');
       await store.save({'schemaVersion': 99});
-      store.close();
+      await _close(store);
       final app = AppModel();
       await app.initialize(storagePath: '${temp.path}/app.sqlite');
       expect(app.storageError, isNotEmpty);
       await app.save();
+      // The intentionally unsupported app snapshot must not be saved by a
+      // normal shutdown. Dispose still starts the async database close; wait
+      // for its actual completion before reopening or deleting files.
       app.dispose();
+      await app.storage.closed;
+      expect(app.storage.closeError, isEmpty);
       final read = AppStorage();
       expect(
         (await read.open(path: '${temp.path}/app.sqlite'))!['schemaVersion'],
         99,
       );
-      read.close();
+      await _close(read);
       await temp.delete(recursive: true);
     },
   );
@@ -325,7 +343,7 @@ void main() {
       ),
     );
     await old.save();
-    old.dispose();
+    await _shutdown(old);
     final restored = AppModel();
     await restored.initialize(storagePath: path);
     expect(restored.sessions.length, 2);
@@ -335,11 +353,11 @@ void main() {
     );
     expect(restored.commands.map((c) => c.name), ['读取设备状态', '自定义命令']);
     expect(restored.groups['default'], '默认分组');
-    restored.dispose();
+    await _shutdown(restored);
     final check = AppStorage();
     final persisted = await check.open(path: path);
     expect((persisted!['sessions'] as List).length, 2);
-    check.close();
+    await _close(check);
     await temp.delete(recursive: true);
   });
 }

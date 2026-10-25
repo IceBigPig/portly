@@ -8,6 +8,9 @@ import 'package:portly/platform/storage_io.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 void main() {
+  // This integration fixture durably writes 10,000 real frames with FULL
+  // commits, index maintenance and rotation. Allow slower CI disks to finish
+  // without weakening its size, search, deletion or schema assertions.
   test('dense entropy capture bounds index growth and exact short/HEX lookup survives rotation deletion', () async {
     final temp = await Directory.systemTemp.createTemp('portly-index-space-');
     final recorder = LogRecorder(), archive = LogArchive(), errors = <String>[];
@@ -119,7 +122,7 @@ void main() {
     expect(schema, contains("tokenize='ascii'"));
     db.close();
     await temp.delete(recursive: true);
-  });
+  }, timeout: const Timeout(Duration(minutes: 2)));
 
   test('position-free candidates verify order, byte alignment, Unicode and literal NUL/FTS punctuation', () async {
     final temp = await Directory.systemTemp.createTemp(

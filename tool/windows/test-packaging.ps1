@@ -79,16 +79,35 @@ try {
     New-FixtureElf $elf 62
     Assert-PortlyAotArchitecture $elf x64
     Assert-True $true 'Accept x64 ELF AOT snapshot.'
+    $crt = Join-Path $temp 'mixed-arm64-crt'
+    New-Item -ItemType Directory -Path $crt | Out-Null
+    New-FixturePe (Join-Path $crt 'msvcp140.dll') 0xAA64
+    New-FixturePe (Join-Path $crt 'vcruntime140.dll') 0xAA64
+    New-FixturePe (Join-Path $crt 'vcruntime140_1.dll') 0x8664
+    $nativeCrt = @(Get-PortlyCrtFiles $crt arm64)
+    Assert-True ($nativeCrt.Count -eq 2 -and 'vcruntime140_1.dll' -notin $nativeCrt.Name) 'Filter x64 compatibility CRT from ARM64 redist.'
+    Assert-True (@(Get-PortlyCrtFiles $crt x64).Count -eq 1) 'Select matching CRT by PE architecture rather than folder name.'
+    Remove-Item -LiteralPath (Join-Path $crt 'vcruntime140_1.dll')
+    Assert-Throws { Get-PortlyCrtFiles $crt x64 } 'Refuse a CRT directory with no native target runtime.'
     foreach ($arch in @('x64', 'arm64')) {
         $bundle = Join-Path $temp "bundle-$arch"
         New-Item -ItemType Directory -Path (Join-Path $bundle 'data/flutter_assets') -Force | Out-Null
         $machine = if ($arch -eq 'x64') { 0x8664 } else { 0xAA64 }
-        foreach ($name in @('portly.exe', 'flutter_windows.dll', 'serialport.dll', 'sqlite3.dll', 'msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll')) {
+        $nativeNames = @('portly.exe', 'flutter_windows.dll', 'serialport.dll', 'sqlite3.dll', 'msvcp140.dll', 'vcruntime140.dll')
+        if ($arch -eq 'x64') { $nativeNames += 'vcruntime140_1.dll' }
+        foreach ($name in $nativeNames) {
             New-FixturePe (Join-Path $bundle $name) $machine 'KERNEL32.dll'
         }
         New-FixtureElf (Join-Path $bundle 'data/app.so') $(if ($arch -eq 'x64') { 62 } else { 183 })
         Set-Content -LiteralPath (Join-Path $bundle 'data/icudtl.dat') -Value 'fixture'
-        Assert-True (@(Assert-PortlyBundle $bundle $arch).Count -eq 7) "Accept complete $arch bundle."
+        Assert-True (@(Assert-PortlyBundle $bundle $arch).Count -eq $nativeNames.Count) "Accept complete $arch bundle."
+        if ($arch -eq 'arm64') {
+            New-FixturePe (Join-Path $bundle 'serialport.dll') $machine 'vcruntime140_1.dll'
+            Assert-Throws { Assert-PortlyBundle $bundle $arch } 'Never ignore an actually imported runtime excluded by CRT architecture filtering.'
+            New-FixturePe (Join-Path $bundle 'vcruntime140_1.dll') 0x8664
+            Assert-Throws { Assert-PortlyBundle $bundle $arch } 'Never allow a foreign CRT to satisfy a native payload dependency.'
+            Remove-Item -LiteralPath (Join-Path $bundle 'vcruntime140_1.dll')
+        }
         New-FixturePe (Join-Path $bundle 'serialport.dll') $machine 'missing-vendor.dll'
         Assert-Throws { Assert-PortlyBundle $bundle $arch } "Refuse unbundled $arch vendor dependency."
         New-FixturePe (Join-Path $bundle 'serialport.dll') $machine 'KERNEL32.dll' 'missing-delay.dll'

@@ -1100,6 +1100,10 @@ class Session extends ChangeNotifier {
       });
     }
     if (!_stopSignal.isCompleted) _stopSignal.complete();
+    final pendingWrites = transport;
+    if (pendingWrites is PendingWriteCancellation) {
+      (pendingWrites as PendingWriteCancellation).cancelPendingWrites();
+    }
     ++_taskGeneration;
     _responseReceiver = null;
     running = fileSending = false;

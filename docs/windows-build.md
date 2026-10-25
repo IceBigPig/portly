@@ -44,7 +44,7 @@ GitHub Actions 中把 SDK 目标目录放到 `$env:RUNNER_TEMP`。setup 脚本�
 
 ARM64 使用对应的 `arm64` 文件名。ZIP 解压后直接运行 `Portly/portly.exe`，不能只复制 EXE。安装包使用当前用户目录，不要求管理员权限；卸载不删除用户配置、历史或归档。x64 安装包只允许 x64 Windows，ARM64 安装包只允许 ARM64 Windows，避免在 ARM64 机器上误装 x64 版本。
 
-脚本从 Visual Studio 可再分发目录复制匹配架构的 app-local CRT，供便携版及安装版使用；不从 `System32` 复制开发机器 DLL。app-local CRT 的后续安全更新随应用发行维护。完整目录中每个 EXE/DLL 必须具有目标 PE 架构，静态和延迟导入必须能在包内或明确的 Windows 系统 DLL 集合中解析。`data/app.so` 是 Flutter ELF64 AOT 快照，另按 ELF machine 校验。脚本强制检查动态加载的 `serialport.dll` 和 SQLite 原生资产，避免仅检查静态依赖而漏掉 FFI DLL。
+脚本按 DLL 的实际 PE 架构，从 Visual Studio 可再分发目录复制匹配的 app-local CRT，供便携版及安装版使用；不从 `System32` 复制开发机器 DLL。app-local CRT 的后续安全更新随应用发行维护。微软 ARM64 CRT 发行目录也会附带 x64 的 `vcruntime140_1.dll`，脚本排除这类兼容库；如果原生应用实际导入了未打包的 DLL，依赖闭包检查仍会拒绝分发。完整目录中每个 EXE/DLL 必须具有目标 PE 架构，静态和延迟导入必须能在包内或明确的 Windows 系统 DLL 集合中解析。`data/app.so` 是 Flutter ELF64 AOT 快照，另按 ELF machine 校验。脚本强制检查动态加载的 `serialport.dll` 和 SQLite 原生资产，避免仅检查静态依赖而漏掉 FFI DLL。
 
 当前脚本不执行 Authenticode 签名，manifest 会明确记录 `signed: false`。正式发布者可在受控 Windows 签名流程中签署应用和安装器，再重新生成哈希；签名后旧哈希无效。SHA-256 校验不等同于发行者身份认证。
 
@@ -57,7 +57,7 @@ ARM64 使用对应的 `arm64` 文件名。ZIP 解压后直接运行 `Portly/port
 
 ## 本地已验证与待验证
 
-2026-10-25 在 macOS ARM64 上使用官方 PowerShell 7.5.4 运行 23 项检查，覆盖脚本 AST 语法、PE32+ 和 ELF64 两架构识别、错误架构拒绝、截断 PE、普通和延迟导入、缺失 FFI/依赖拒绝，以及非 Windows 主机拒绝打包。另实际下载官方 Flutter 3.47.7 两架构引擎和 sqlite3 3.8.0 两架构 DLL，核对 PE 架构及 SQLite 固定哈希。独立 CMake 配置也确认禁用 JNI 后不生成/捆绑 JVM bridge。
+2026-10-25 在 macOS ARM64 上使用官方 PowerShell 7.5.4 运行 29 项检查，覆盖脚本 AST 语法、PE32+ 和 ELF64 两架构识别、错误架构拒绝、截断 PE、普通和延迟导入、缺失 FFI/依赖拒绝，以及非 Windows 主机拒绝打包。另实际下载官方 Flutter 3.47.7 两架构引擎和 sqlite3 3.8.0 两架构 DLL，核对 PE 架构及 SQLite 固定哈希。独立 CMake 配置也确认禁用 JNI 后不生成/捆绑 JVM bridge。
 
 尚未完成的 Windows 验收包括：MSVC 编译及链接、Inno 脚本实际编译、安装/卸载、原生界面启动、配置与历史/归档落盘、SQLite FTS5/trigram 查询、串口设备/DTR/RTS/自动重连、文件发送、多窗口退出。这些必须在相应 Windows 架构的 runner 或设备上执行，不能标记为已通过。
 

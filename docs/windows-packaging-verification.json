@@ -5,7 +5,7 @@
   "engineRevision": "deb287481e3ce9468f3434937ced4240a70539ca",
   "powershellVersion": "7.5.4",
   "powershellTarSha256": "3aaadd7ca62f1e4dbe59145b6af24e926d61f8da8a4782bc535e500c184135f0",
-  "syntaxAndFixtureChecksPassed": 23,
+  "syntaxAndFixtureChecksPassed": 29,
   "jniDisabledCmakeConfigurePassed": true,
   "windowsArm64DartArtifactHeadStatus": 200,
   "nativeAssets": [
@@ -49,5 +49,68 @@
   "windowsAppBuildPerformed": false,
   "innoCompilerRunPerformed": false,
   "windowsInstallOrRuntimeTestPerformed": false,
-  "hardwareSerialTestPerformed": false
+  "hardwareSerialTestPerformed": false,
+  "microsoftArm64CrtEvidence": {
+    "url": "https://download.visualstudio.microsoft.com/download/pr/d7450eb5-03e1-436d-9e7e-deb5fe4759b3/5139E1440C3A20B92153A4DB561C069A0175AAF76C276C3E5B6F56099EDCF4B0/VC_redist.arm64.exe",
+    "redistributableSha256": "5139e1440c3a20b92153a4db561c069a0175aaf76c276c3e5b6f56099edcf4b0",
+    "extractedCabFiles": [
+      {
+        "file": "msvcp140_1.dll",
+        "machine": "0xAA64",
+        "bytes": 50744,
+        "sha256": "af9dd287c5e5d47186fec391099e140bf9e758245d39c78e94f8cb4ffaada1e5"
+      },
+      {
+        "file": "vcruntime140_1.dll",
+        "machine": "0x8664",
+        "bytes": 53320,
+        "sha256": "42b5f76f1f0ae03c93fc4c107adf83c5f14e86032474860032cfe672d0836546"
+      },
+      {
+        "file": "concrt140.dll",
+        "machine": "0xAA64",
+        "bytes": 722488,
+        "sha256": "599bc7eaec13274536cc3ec2d18e810e79bc9eb915237b4ee6d25081b6926214"
+      },
+      {
+        "file": "msvcp140.dll",
+        "machine": "0xAA64",
+        "bytes": 1372216,
+        "sha256": "045faeab0b5710816ae160ea20dae8495ffc11bb51feca15d22aaf7ff3752cb3"
+      },
+      {
+        "file": "vcruntime140_threads.dll",
+        "machine": "0xAA64",
+        "bytes": 63016,
+        "sha256": "165c779ae40e8c1a914537873629c17546d6866ecb3c24cc2022805053e6c77d"
+      },
+      {
+        "file": "vcruntime140.dll",
+        "machine": "0xAA64",
+        "bytes": 199200,
+        "sha256": "d8a8513921544569837e400d37cc71302819967ae6defa932266a7ecb41dbaf9"
+      },
+      {
+        "file": "msvcp140_2.dll",
+        "machine": "0xAA64",
+        "bytes": 520248,
+        "sha256": "17dd07ea186d419e1803a4b25785644b59d4346dd1a00df709fb6eb403baa11e"
+      },
+      {
+        "file": "msvcp140_codecvt_ids.dll",
+        "machine": "0xAA64",
+        "bytes": 41520,
+        "sha256": "6e075254adab66a80e1624b656fbe81043c23149e5045871b2eccc4c7ff589ce"
+      },
+      {
+        "file": "msvcp140_atomic_wait.dll",
+        "machine": "0xAA64",
+        "bytes": 86048,
+        "sha256": "4384e35592b7be1f0b80718eba2f779060d73c3e232eb1bfadf8a4cb9b14601f"
+      }
+    ],
+    "nativeArchitectureSelectionPassed": true,
+    "nativeDependencyClosurePassedWithFixtureExecutable": true,
+    "windowsExecutionPerformed": false
+  }
 }

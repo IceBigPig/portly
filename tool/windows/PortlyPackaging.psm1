@@ -106,6 +106,23 @@ function Assert-PortlyAotArchitecture {
     } finally { $reader.Dispose(); $stream.Dispose() }
 }
 
+function Get-PortlyCrtFiles {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][string]$Directory, [Parameter(Mandatory)][ValidateSet('x64', 'arm64')][string]$Architecture)
+    # Microsoft's ARM64 redistributable also contains x64 compatibility DLLs
+    # (notably vcruntime140_1.dll). Select only native payload; dependency closure
+    # below still fails if an application actually imports an excluded DLL.
+    $files = @(Get-ChildItem -LiteralPath $Directory -File -Filter '*.dll')
+    $native = @()
+    foreach ($file in $files) {
+        $info = Read-PortlyPe $file.FullName
+        if ($info.Architecture -eq $Architecture) { $native += $file }
+        else { Write-Verbose "Excluded foreign-architecture CRT: $($file.Name) ($($info.Architecture))" }
+    }
+    if ($native.Count -eq 0) { throw "No native $Architecture redistributable CRT DLLs found: $Directory" }
+    return $native
+}
+
 function Test-PortlySystemDll {
     param([string]$Name)
     if ($Name -match '^(api-ms-win-|ext-ms-win-)[a-z0-9_-]+\.dll$') { return $true }
@@ -116,7 +133,9 @@ function Test-PortlySystemDll {
 function Assert-PortlyBundle {
     [CmdletBinding()]
     param([Parameter(Mandatory)][string]$Directory, [Parameter(Mandatory)][ValidateSet('x64', 'arm64')][string]$Architecture)
-    foreach ($required in @('portly.exe', 'flutter_windows.dll', 'serialport.dll', 'msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll', 'data/app.so', 'data/icudtl.dat', 'data/flutter_assets')) {
+    $requiredFiles = @('portly.exe', 'flutter_windows.dll', 'serialport.dll', 'msvcp140.dll', 'vcruntime140.dll', 'data/app.so', 'data/icudtl.dat', 'data/flutter_assets')
+    if ($Architecture -eq 'x64') { $requiredFiles += 'vcruntime140_1.dll' }
+    foreach ($required in $requiredFiles) {
         if (-not (Test-Path -LiteralPath (Join-Path $Directory $required))) { throw "Missing bundle file: $required" }
     }
     $nativeFiles = @(Get-ChildItem -LiteralPath $Directory -Recurse -File | Where-Object { $_.Extension -in @('.exe', '.dll') })
@@ -137,4 +156,4 @@ function Assert-PortlyBundle {
     return $results
 }
 
-Export-ModuleMember -Function Read-PortlyPe, Assert-PortlyBinaryArchitecture, Assert-PortlyAotArchitecture, Assert-PortlyBundle
+Export-ModuleMember -Function Read-PortlyPe, Assert-PortlyBinaryArchitecture, Assert-PortlyAotArchitecture, Get-PortlyCrtFiles, Assert-PortlyBundle

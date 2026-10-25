@@ -64,9 +64,7 @@ if (-not $VCRuntimeDirectory) {
     $VCRuntimeDirectory = $crt.FullName
 }
 $VCRuntimeDirectory = [IO.Path]::GetFullPath($VCRuntimeDirectory)
-$crtDlls = @(Get-ChildItem -LiteralPath $VCRuntimeDirectory -File -Filter '*.dll')
-if ($crtDlls.Count -eq 0) { throw 'No redistributable CRT DLLs found.' }
-foreach ($dll in $crtDlls) { $null = Assert-PortlyBinaryArchitecture $dll.FullName $Architecture }
+$crtDlls = @(Get-PortlyCrtFiles $VCRuntimeDirectory $Architecture)
 $scratch = Join-Path ([IO.Path]::GetTempPath()) ("portly-windows-package-" + [guid]::NewGuid().ToString('N'))
 $bundle = Join-Path $scratch 'Portly'
 $published = [Collections.Generic.List[string]]::new()
@@ -96,6 +94,13 @@ try {
     $licenseDestination = Join-Path $bundle 'third_party_licenses'
     if (Test-Path -LiteralPath $licenseDestination) { Remove-Item -LiteralPath $licenseDestination -Recurse -Force }
     Copy-Item -LiteralPath $licenses -Destination $licenseDestination -Recurse -Force
+    # Bind only the staging license copy to this build's actual Flutter notices.
+    # The helper verifies lock/SDK/package identities and every original license
+    # checksum before updating the notice text, its field and checksum entries.
+    $python = (Get-Command python -ErrorAction Stop).Source
+    $noticeSyncJson = & $python (Join-Path $repo 'tool/sync_release_notices.py') --app-notices (Join-Path $bundle 'data/flutter_assets/NOTICES.Z') --staged-licenses $licenseDestination --project-root $repo
+    if ($LASTEXITCODE -ne 0) { throw 'As-built Flutter license synchronization failed.' }
+    $noticeSync = ($noticeSyncJson -join "`n") | ConvertFrom-Json
     $peFiles = @(Assert-PortlyBundle $bundle $Architecture)
     $commit = (& git rev-parse HEAD 2>$null)
     if ($LASTEXITCODE -ne 0) { $commit = 'uncommitted' }
@@ -107,6 +112,7 @@ try {
         flutterVersion = $sdkVersion.flutterVersion; flutterRevision = $sdkVersion.frameworkRevision
         sourceCommit = $commit; createdUtc = [DateTime]::UtcNow.ToString('o'); signed = $false
         msvcCrtSource = (Split-Path $VCRuntimeDirectory -Leaf); peFiles = $peFiles; files = $files
+        asBuiltNotices = $noticeSync
         validation = 'PE architecture, ELF AOT architecture, required FFI assets, static/delay DLL dependency closure; no hardware certification'
     }
     $manifestPath = Join-Path $scratch "$baseName-manifest.json"
@@ -118,6 +124,12 @@ try {
     [IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $verify)
     $extracted = Join-Path $verify 'Portly'
     $null = Assert-PortlyBundle $extracted $Architecture
+    $extractedNoticeJson = & $python (Join-Path $repo 'tool/sync_release_notices.py') --app-notices (Join-Path $extracted 'data/flutter_assets/NOTICES.Z') --staged-licenses (Join-Path $extracted 'third_party_licenses') --project-root $repo --verify-only
+    if ($LASTEXITCODE -ne 0) { throw 'Extracted ZIP Flutter licenses do not match its actual notices or integrity checks.' }
+    $extractedNotices = ($extractedNoticeJson -join "`n") | ConvertFrom-Json
+    foreach ($field in @('flutterNoticesSha256', 'compressedFlutterNoticesSha256', 'dependencyManifestSha256', 'licenseChecksumManifestSha256')) {
+        if ($extractedNotices.$field -ne $noticeSync.$field) { throw "Extracted ZIP notice verification differs: $field" }
+    }
     foreach ($file in $files) {
         if ((Get-FileHash -LiteralPath (Join-Path $extracted $file.path) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $file.sha256) { throw "ZIP verification failed: $($file.path)" }
     }

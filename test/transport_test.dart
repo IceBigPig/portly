@@ -79,7 +79,9 @@ void main() {
     await echo.close();
   });
   test('UDP preserves datagram boundaries and source endpoints', () async {
-    final port = await freePort();
+    final bound = await RawDatagramSocket.bind('127.0.0.1', 0);
+    final port = bound.port;
+    bound.close();
     final transport = await openTransport(
       ConnectionConfig(
         kind: ConnectionKind.udp,
@@ -87,34 +89,85 @@ void main() {
         networkPort: port,
       ),
     );
-    final remote = await RawDatagramSocket.bind('127.0.0.1', 0);
-    final messages = <TransportEvent>[];
-    final sub = transport.events.listen((e) {
-      if (e.bytes.isNotEmpty) messages.add(e);
-    });
-    remote.send([1, 2], InternetAddress.loopbackIPv4, port);
-    remote.send([3], InternetAddress.loopbackIPv4, port);
-    await until(() => messages.length == 2);
-    expect(messages.map((m) => m.bytes.toList()), [
-      [1, 2],
-      [3],
-    ]);
-    expect(messages.first.endpoint, '127.0.0.1:${remote.port}');
+    RawDatagramSocket? remote;
+    StreamSubscription<TransportEvent>? sub;
+    StreamSubscription<RawSocketEvent>? rsub;
+    Completer<void>? writable;
     final reply = Completer<List<int>>();
-    final rsub = remote.listen((event) {
-      if (event == RawSocketEvent.read && !reply.isCompleted) {
-        reply.complete(remote.receive()!.data);
+    final replyFuture = reply.future;
+    unawaited(replyFuture.then<void>((_) {}, onError: (Object _) {}));
+    try {
+      remote = await RawDatagramSocket.bind('127.0.0.1', 0);
+      final socket = remote;
+      socket.writeEventsEnabled = false;
+      rsub = socket.listen(
+        (event) {
+          if (event == RawSocketEvent.write) {
+            socket.writeEventsEnabled = false;
+            if (writable != null && !writable!.isCompleted) {
+              writable!.complete();
+            }
+          } else if (event == RawSocketEvent.read) {
+            Datagram? data;
+            while ((data = socket.receive()) != null) {
+              if (!reply.isCompleted) reply.complete(data!.data);
+            }
+          }
+        },
+        onError: (Object error) {
+          if (writable != null && !writable!.isCompleted) {
+            writable!.completeError(error);
+          }
+          if (!reply.isCompleted) reply.completeError(error);
+        },
+      );
+      Future<void> sendRemote(List<int> bytes) async {
+        final watch = Stopwatch()..start();
+        while (true) {
+          final count = socket.send(bytes, InternetAddress.loopbackIPv4, port);
+          if (count == bytes.length) return;
+          if (count != 0) {
+            throw StateError('Remote UDP short write $count/${bytes.length}');
+          }
+          final left = const Duration(seconds: 3) - watch.elapsed;
+          if (left <= Duration.zero) {
+            throw TimeoutException('Remote UDP would block');
+          }
+          final ready = Completer<void>();
+          writable = ready;
+          try {
+            socket.writeEventsEnabled = true;
+            await ready.future.timeout(left);
+          } finally {
+            socket.writeEventsEnabled = false;
+            if (identical(writable, ready)) writable = null;
+          }
+        }
       }
-    });
-    await transport.send(
-      Uint8List.fromList([4, 5]),
-      target: messages.first.endpoint,
-    );
-    expect(await reply.future.timeout(const Duration(seconds: 3)), [4, 5]);
-    await sub.cancel();
-    await rsub.cancel();
-    remote.close();
-    await transport.close();
+
+      final messages = <TransportEvent>[];
+      sub = transport.events.listen((e) {
+        if (e.bytes.isNotEmpty) messages.add(e);
+      });
+      await sendRemote([1, 2]);
+      await sendRemote([3]);
+      await until(() => messages.length == 2);
+      expect(messages.map((m) => m.bytes.toList()), [
+        [1, 2],
+        [3],
+      ]);
+      expect(messages.first.endpoint, '127.0.0.1:${socket.port}');
+      await transport.send(
+        Uint8List.fromList([4, 5]),
+        target: messages.first.endpoint,
+      );
+      expect(await replyFuture.timeout(const Duration(seconds: 3)), [4, 5]);
+    } finally {
+      await sub?.cancel();
+      await rsub?.cancel();
+      remote?.close();
+      await transport.close();
+    }
   });
   test('Session drafts are immutable after queued submission, disconnect stops loop', () async {
     final received = <int>[];

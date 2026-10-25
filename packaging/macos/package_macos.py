@@ -18,6 +18,8 @@ import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / 'tool'))
+from sync_release_notices import synchronize_notices
 MACH_MAGICS = {bytes.fromhex(value) for value in (
     "cafebabe", "bebafeca", "cafebabf", "bfbafeca", "cffaedfe", "feedfacf", "cefaedfe", "feedface",
 )}
@@ -243,6 +245,10 @@ def main() -> None:
         staged = image / "Portly.app"
         run("ditto", source_app, staged)
         notices = install_notices(staged, [path.expanduser().resolve() for path in args.include_notice])
+        as_built_notices = synchronize_notices(
+            staged / 'Contents/Frameworks/App.framework/Resources/flutter_assets/NOTICES.Z',
+            staged / 'Contents/Resources/Notices/third_party_licenses', ROOT,
+        )
         entitlement_file = work / "entitlements.plist"
         with entitlement_file.open("wb") as target:
             plistlib.dump(source_entitlements, target)
@@ -294,6 +300,7 @@ def main() -> None:
                   "sourceApp": source_app.name, "sourceDeclaredMinimumMacOS": source_info.get("LSMinimumSystemVersion"),
                   "architecture": "arm64", "signing": "ad-hoc",
                   "developerIdSigned": False, "notarized": False, "packagedNotices": notices,
+                  "asBuiltNotices": as_built_notices,
                   "dmgMountVerified": True, "dmgDetached": True, "zipExtractionVerified": True,
                   "applicationShortcut": "/Applications", "app": staged_result, "artifacts": artifacts}
         targets[4].write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")

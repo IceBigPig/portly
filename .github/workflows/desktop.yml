@@ -29,6 +29,7 @@ jobs:
       - run: flutter test --reporter expanded
       - name: Validate packaging tools
         run: |
-          python3 -m py_compile packaging/macos/package_macos.py tool/package-source.py
+          python3 -m py_compile packaging/macos/package_macos.py tool/package-source.py tool/verify-release-assets.py tool/sync_release_notices.py
+          python3 tool/test_sync_release_notices.py
           bash -n tool/package-macos.sh
           pwsh -NoProfile -File tool/windows/test-packaging.ps1

@@ -37,7 +37,12 @@ Future<Transport> openTransport(ConnectionConfig config) async {
   }
 }
 
-class IoTransport implements Transport, SerialControl, DatagramTargetResolver {
+class IoTransport
+    implements
+        Transport,
+        SerialControl,
+        DatagramTargetResolver,
+        PendingWriteCancellation {
   final ConnectionConfig config;
   final _events = StreamController<TransportEvent>.broadcast();
   final _clients = <String, Socket>{};
@@ -45,16 +50,25 @@ class IoTransport implements Transport, SerialControl, DatagramTargetResolver {
   Socket? _socket;
   ServerSocket? _server;
   RawDatagramSocket? _udp;
+  final Future<RawDatagramSocket> Function(String, int) _bindDatagram;
+  Future<void> _udpQueue = Future<void>.value();
+  Completer<void>? _udpWriteReady, _udpAbort;
+  Object? _udpFailure;
+  int _udpWriteGeneration = 0, _udpQueued = 0, _udpQueuedBytes = 0;
   SerialPort? _serial;
   Timer? _serialReadTimer;
   bool _closed = false;
+  Future<void>? _closeFuture;
   Timer? _serialMonitor;
   SerialStatus _serialStatus = const SerialStatus();
   @override
   SerialStatus get serialStatus => _serialStatus;
   @override
   String localEndpoint = '';
-  IoTransport(this.config);
+  IoTransport(
+    this.config, {
+    Future<RawDatagramSocket> Function(String, int)? datagramBinder,
+  }) : _bindDatagram = datagramBinder ?? RawDatagramSocket.bind;
   @override
   Stream<TransportEvent> get events => _events.stream;
   @override
@@ -219,28 +233,40 @@ class IoTransport implements Transport, SerialControl, DatagramTargetResolver {
         );
       case ConnectionKind.udp:
         checkPort(config.networkPort);
-        _udp = await RawDatagramSocket.bind(
-          config.bindAddress,
-          config.networkPort,
-        );
+        _udp = await _bindDatagram(config.bindAddress, config.networkPort);
         _udp!.broadcastEnabled = config.broadcast;
+        _udp!.writeEventsEnabled = false;
         localEndpoint = '${_udp!.address.address}:${_udp!.port}';
         _subscriptions.add(
-          _udp!.listen((event) {
-            if (event == RawSocketEvent.read) {
-              Datagram? data;
-              while ((data = _udp!.receive()) != null) {
-                emit(
-                  TransportEvent(
-                    bytes: data!.data,
-                    endpoint: '${data.address.address}:${data.port}',
-                  ),
-                );
+          _udp!.listen(
+            (event) {
+              if (event == RawSocketEvent.read) {
+                Datagram? data;
+                while ((data = _udp!.receive()) != null) {
+                  emit(
+                    TransportEvent(
+                      bytes: data!.data,
+                      endpoint: '${data.address.address}:${data.port}',
+                    ),
+                  );
+                }
+              } else if (event == RawSocketEvent.write) {
+                _udp!.writeEventsEnabled = false;
+                final ready = _udpWriteReady;
+                _udpWriteReady = null;
+                if (ready != null && !ready.isCompleted) ready.complete();
+              } else if (event == RawSocketEvent.closed) {
+                _udpFailure = StateError('UDP 已关闭');
+                cancelPendingWrites();
+                emit(TransportEvent(message: 'UDP 已关闭', closed: true));
               }
-            } else if (event == RawSocketEvent.closed) {
-              emit(TransportEvent(message: 'UDP 已关闭', closed: true));
-            }
-          }, onError: error),
+            },
+            onError: (Object issue) {
+              _udpFailure = issue;
+              cancelPendingWrites();
+              error(issue);
+            },
+          ),
         );
     }
   }
@@ -343,15 +369,104 @@ class IoTransport implements Transport, SerialControl, DatagramTargetResolver {
         client.add(bytes);
         await client.flush();
       case ConnectionKind.udp:
-        final resolved = await resolveDatagramTarget(target ?? '');
-        final split = resolved.lastIndexOf(':');
-        final address = InternetAddress(resolved.substring(0, split)),
-            port = int.parse(resolved.substring(split + 1));
-        if (_closed) throw StateError('连接已关闭');
-        if (_udp!.send(bytes, address, port) != bytes.length) {
-          throw StateError('UDP 未能提交完整数据报');
-        }
+        await _sendDatagram(bytes, target ?? '');
     }
+  }
+
+  @override
+  void cancelPendingWrites() {
+    if (config.kind != ConnectionKind.udp) return;
+    _udpWriteGeneration++;
+    final abort = _udpAbort, ready = _udpWriteReady;
+    if (abort != null && !abort.isCompleted) abort.complete();
+    if (ready != null && !ready.isCompleted) ready.complete();
+    _udpWriteReady = null;
+    try {
+      _udp?.writeEventsEnabled = false;
+    } catch (_) {
+      /* Socket may be closed. */
+    }
+  }
+
+  Future<void> _sendDatagram(Uint8List input, String target) {
+    if (input.isEmpty || input.length > 65507) {
+      throw const FormatException('UDP 数据报长度须为 1–65507 字节');
+    }
+    if (_udpQueued >= 1000 ||
+        _udpQueuedBytes + input.length > 8 * 1024 * 1024) {
+      throw StateError('UDP 发送队列已满（1000 项 / 8 MiB）');
+    }
+    final bytes = Uint8List.fromList(input), generation = _udpWriteGeneration;
+    final done = Completer<void>();
+    _udpQueued++;
+    _udpQueuedBytes += bytes.length;
+    _udpQueue = _udpQueue.catchError((Object _) {}).then((_) async {
+      final abort = Completer<void>();
+      void check() {
+        if (_closed || _udp == null) throw StateError('UDP 连接已关闭');
+        if (_udpFailure != null) throw _udpFailure!;
+        if (generation != _udpWriteGeneration) throw StateError('UDP 发送已取消');
+      }
+
+      try {
+        check();
+        _udpAbort = abort;
+        final watch = Stopwatch()..start();
+        final timeout = Duration(
+          milliseconds: config.timeoutMs.clamp(10, 600000),
+        );
+        Duration remaining() {
+          final left = timeout - watch.elapsed;
+          if (left <= Duration.zero) {
+            throw TimeoutException('UDP 等待可写超时', timeout);
+          }
+          return left;
+        }
+
+        // The abort belongs only to this operation. It is released on completion
+        // instead of retaining one close-future callback per successful send.
+        final resolved = await Future.any<String>([
+          resolveDatagramTarget(target),
+          abort.future.then<String>((_) => throw StateError('UDP 发送已取消')),
+        ]).timeout(remaining());
+        check();
+        final split = resolved.lastIndexOf(':');
+        final address = InternetAddress(resolved.substring(0, split));
+        final port = int.parse(resolved.substring(split + 1));
+        while (true) {
+          check();
+          remaining();
+          final count = _udp!.send(bytes, address, port);
+          if (count == bytes.length) break;
+          // A zero return means would-block, not a submitted datagram. Only this
+          // case may retry. Any non-zero short result must never send a suffix.
+          if (count != 0) {
+            throw StateError('UDP 未能提交完整数据报：$count / ${bytes.length}');
+          }
+          final ready = Completer<void>();
+          _udpWriteReady = ready;
+          try {
+            _udp!.writeEventsEnabled = true;
+            await ready.future.timeout(remaining());
+          } finally {
+            if (identical(_udpWriteReady, ready)) _udpWriteReady = null;
+            try {
+              _udp?.writeEventsEnabled = false;
+            } catch (_) {
+              /* Closed. */
+            }
+          }
+        }
+        done.complete();
+      } catch (issue, stack) {
+        done.completeError(issue, stack);
+      } finally {
+        if (identical(_udpAbort, abort)) _udpAbort = null;
+        _udpQueued--;
+        _udpQueuedBytes -= bytes.length;
+      }
+    });
+    return done.future;
   }
 
   @override
@@ -361,9 +476,18 @@ class IoTransport implements Transport, SerialControl, DatagramTargetResolver {
   }
 
   @override
-  Future<void> close() async {
-    if (_closed) return;
+  Future<void> close() {
+    final closing = _closeFuture;
+    if (closing != null) return closing;
     _closed = true;
+    cancelPendingWrites();
+    return _closeFuture = _close();
+  }
+
+  Future<void> _close() async {
+    // Cancellation wakes the current write/DNS wait. Settle every accepted
+    // datagram before reporting that disconnect has finished.
+    await _udpQueue;
     _serialMonitor?.cancel();
     for (final sub in _subscriptions) {
       await sub.cancel();

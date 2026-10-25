@@ -49,3 +49,9 @@ abstract interface class SerialControl {
   SerialStatus get serialStatus;
   Future<void> setControlLines({bool? dtr, bool? rts});
 }
+
+/// Optional cancellation of writes that have not yet been submitted to the OS.
+/// Already submitted bytes are never replayed or reported as retracted.
+abstract interface class PendingWriteCancellation {
+  void cancelPendingWrites();
+}

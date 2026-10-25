@@ -65,6 +65,7 @@ jobs:
       - run: flutter pub get --enforce-lockfile
       - run: dart analyze lib test tool/stress_main.dart tool/capture_desktop_ui_test.dart
       - run: flutter test --reporter expanded
+      - run: python3 tool/test_sync_release_notices.py
       - name: Build and verify Apple Silicon DMG and ZIP
         env:
           RELEASE_VERSION: ${{ needs.version.outputs.version }}
@@ -105,6 +106,7 @@ jobs:
       - run: dart analyze lib test
       - run: flutter test --reporter expanded
       - run: ./tool/windows/test-packaging.ps1
+      - run: python tool/test_sync_release_notices.py
       - name: Build and verify installer and portable ZIP
         env:
           TARGET_ARCH: ${{ matrix.arch }}
@@ -114,6 +116,16 @@ jobs:
           TARGET_ARCH: ${{ matrix.arch }}
           RELEASE_VERSION: ${{ needs.version.outputs.version }}
         run: ./tool/windows/smoke-install.ps1 -Architecture $env:TARGET_ARCH -Installer "dist/windows/$env:TARGET_ARCH/Portly-$env:RELEASE_VERSION-windows-$env:TARGET_ARCH-setup.exe" -ReportPath "dist/windows/$env:TARGET_ARCH/Portly-$env:RELEASE_VERSION-windows-$env:TARGET_ARCH-smoke.json"
+      - name: Preserve native installation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostics-windows-${{ matrix.arch }}
+          path: |
+            dist/windows/${{ matrix.arch }}/*-smoke.json
+            ${{ runner.temp }}/portly-install-smoke-*/*.log
+          if-no-files-found: ignore
+          retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
           name: release-windows-${{ matrix.arch }}
