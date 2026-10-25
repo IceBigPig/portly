@@ -123,6 +123,50 @@ function Get-PortlyCrtFiles {
     return $native
 }
 
+function Find-PortlyCrtDirectory {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][string]$RedistRoot, [Parameter(Mandatory)][ValidateSet('x64', 'arm64')][string]$Architecture)
+    # VS installs both <version>/<arch>/Microsoft.VC*.CRT and the newer
+    # v143/<version>/<arch>/Microsoft.VC*.CRT (also v145). The toolset label is
+    # not a System.Version; only numeric version directories participate in
+    # ordering. Consider both layouts together so an older flat layout cannot
+    # hide a newer toolset-scoped installation.
+    $versions = @()
+    foreach ($directory in @(Get-ChildItem -LiteralPath $RedistRoot -Directory)) {
+        $parsed = $null
+        if ($directory.Name -match '^\d+(?:\.\d+){1,3}$' -and [version]::TryParse($directory.Name, [ref]$parsed)) {
+            $versions += [pscustomobject]@{ Version = $parsed; Directory = $directory }
+        } elseif ($directory.Name -match '^v\d+$') {
+            foreach ($versionDirectory in @(Get-ChildItem -LiteralPath $directory.FullName -Directory)) {
+                $parsed = $null
+                if ($versionDirectory.Name -match '^\d+(?:\.\d+){1,3}$' -and [version]::TryParse($versionDirectory.Name, [ref]$parsed)) {
+                    $versions += [pscustomobject]@{ Version = $parsed; Directory = $versionDirectory }
+                }
+            }
+        }
+    }
+    $required = @('msvcp140.dll', 'vcruntime140.dll')
+    if ($Architecture -eq 'x64') { $required += 'vcruntime140_1.dll' }
+    foreach ($entry in @($versions | Sort-Object -Property Version, { $_.Directory.FullName } -Descending)) {
+        $archRoot = Join-Path $entry.Directory.FullName $Architecture
+        if (-not (Test-Path -LiteralPath $archRoot -PathType Container)) { continue }
+        foreach ($crt in @(Get-ChildItem -LiteralPath $archRoot -Directory -Filter 'Microsoft.VC*.CRT' | Sort-Object Name -Descending)) {
+            try {
+                $native = @(Get-PortlyCrtFiles $crt.FullName $Architecture)
+                $names = @($native | ForEach-Object { $_.Name.ToLowerInvariant() })
+                if (@($required | Where-Object { $_ -notin $names }).Count -ne 0) {
+                    Write-Verbose "Incomplete $Architecture CRT candidate: $($crt.FullName)"
+                    continue
+                }
+                return $crt.FullName
+            } catch {
+                Write-Verbose "Invalid $Architecture CRT candidate $($crt.FullName): $($_.Exception.Message)"
+            }
+        }
+    }
+    throw "No complete native $Architecture MSVC CRT found below $RedistRoot. Install the matching Visual Studio redistributable component or supply -VCRuntimeDirectory."
+}
+
 function Test-PortlySystemDll {
     param([string]$Name)
     if ($Name -match '^(api-ms-win-|ext-ms-win-)[a-z0-9_-]+\.dll$') { return $true }
@@ -156,4 +200,4 @@ function Assert-PortlyBundle {
     return $results
 }
 
-Export-ModuleMember -Function Read-PortlyPe, Assert-PortlyBinaryArchitecture, Assert-PortlyAotArchitecture, Get-PortlyCrtFiles, Assert-PortlyBundle
+Export-ModuleMember -Function Read-PortlyPe, Assert-PortlyBinaryArchitecture, Assert-PortlyAotArchitecture, Get-PortlyCrtFiles, Find-PortlyCrtDirectory, Assert-PortlyBundle

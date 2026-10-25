@@ -50,6 +50,13 @@ function New-FixtureElf([string]$Path, [uint16]$Machine) {
     [BitConverter]::GetBytes($Machine).CopyTo($bytes, 18)
     [IO.File]::WriteAllBytes($Path, $bytes)
 }
+function New-FixtureCrt([string]$Directory, [string]$Architecture) {
+    New-Item -ItemType Directory -Path $Directory -Force | Out-Null
+    $machine = if ($Architecture -eq 'x64') { 0x8664 } else { 0xAA64 }
+    foreach ($name in @('msvcp140.dll', 'vcruntime140.dll')) { New-FixturePe (Join-Path $Directory $name) $machine }
+    # The Microsoft ARM64 directory also ships this x64 compatibility DLL.
+    New-FixturePe (Join-Path $Directory 'vcruntime140_1.dll') 0x8664
+}
 $temp = Join-Path ([IO.Path]::GetTempPath()) ("portly-packaging-tests-" + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $temp | Out-Null
 try {
@@ -89,6 +96,34 @@ try {
     Assert-True (@(Get-PortlyCrtFiles $crt x64).Count -eq 1) 'Select matching CRT by PE architecture rather than folder name.'
     Remove-Item -LiteralPath (Join-Path $crt 'vcruntime140_1.dll')
     Assert-Throws { Get-PortlyCrtFiles $crt x64 } 'Refuse a CRT directory with no native target runtime.'
+    $redist = Join-Path $temp 'MSVC'
+    $old9 = Join-Path $redist '14.9.12345/x64/Microsoft.VC143.CRT'
+    $old40 = Join-Path $redist '14.40.33810/x64/Microsoft.VC143.CRT'
+    New-FixtureCrt $old9 x64
+    New-FixtureCrt $old40 x64
+    Assert-True ((Find-PortlyCrtDirectory $redist x64) -eq $old40) 'Old flat CRT layout sorts numeric versions, not lexically.'
+    $nestedOnly = Join-Path $temp 'MSVC-nested'
+    $new44 = Join-Path $nestedOnly 'v143/14.44.35211/x64/Microsoft.VC143.CRT'
+    New-FixtureCrt $new44 x64
+    New-Item -ItemType Directory -Path (Join-Path $nestedOnly 'notes') -Force | Out-Null
+    Assert-True ((Find-PortlyCrtDirectory $nestedOnly x64) -eq $new44) 'New v143/version layout is discovered without flat fallback.'
+    $mixed44 = Join-Path $redist 'v143/14.44.35211/x64/Microsoft.VC143.CRT'
+    New-FixtureCrt $mixed44 x64
+    Assert-True ((Find-PortlyCrtDirectory $redist x64) -eq $mixed44) 'Choose the latest numeric CRT across old and new layouts.'
+    $arm50 = Join-Path $redist 'v145/14.50.12345/arm64/Microsoft.VC145.CRT'
+    New-FixtureCrt $arm50 arm64
+    Assert-True ((Find-PortlyCrtDirectory $redist arm64) -eq $arm50) 'Select ARM64 in a v145 toolset while filtering its x64 compatibility CRT.'
+    Assert-True ((Find-PortlyCrtDirectory $redist x64) -eq $mixed44) 'A newer ARM64-only toolset does not hide a valid x64 CRT.'
+    $incomplete = Join-Path $redist 'v145/99.0.12345/x64/Microsoft.VC145.CRT'
+    New-FixtureCrt $incomplete x64
+    Remove-Item -LiteralPath (Join-Path $incomplete 'vcruntime140.dll')
+    Assert-True ((Find-PortlyCrtDirectory $redist x64) -eq $mixed44) 'Skip an incomplete newer CRT and use the latest complete target candidate.'
+    $foreign = Join-Path $redist 'v145/99.1.12345/x64/Microsoft.VC145.CRT'
+    New-FixtureCrt $foreign arm64
+    Assert-True ((Find-PortlyCrtDirectory $redist x64) -eq $mixed44) 'A directory named x64 cannot pass with ARM64 PE payload.'
+    $emptyRedist = Join-Path $temp 'MSVC-empty'
+    New-Item -ItemType Directory -Path (Join-Path $emptyRedist 'v143') -Force | Out-Null
+    Assert-Throws { Find-PortlyCrtDirectory $emptyRedist arm64 } 'No valid target CRT fails explicitly rather than ignoring the toolset directory.'
     foreach ($arch in @('x64', 'arm64')) {
         $bundle = Join-Path $temp "bundle-$arch"
         New-Item -ItemType Directory -Path (Join-Path $bundle 'data/flutter_assets') -Force | Out-Null

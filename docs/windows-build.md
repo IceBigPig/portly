@@ -9,7 +9,7 @@
 | x64 | Windows x64、x64 PowerShell 7.2+ | `windows-2022` | `flutter build windows --release` |
 | ARM64 | Windows ARM64、ARM64 PowerShell 7.2+ | `windows-11-arm` | `flutter build windows --release` |
 
-还需要 Visual Studio C++ 桌面工作负载、CMake、Windows SDK、目标架构的 MSVC 工具与可再分发 CRT，以及 Inno Setup 6.3+。当前 GitHub 官方镜像清单列有 Inno Setup；脚本会发现 `ISCC.exe`，缺失时明确失败。自托管环境可以通过 `-InnoSetupCompiler` 和 `-VCRuntimeDirectory` 显式指定。
+还需要 Visual Studio C++ 桌面工作负载、CMake、Windows SDK、目标架构的 MSVC 工具与可再分发 CRT，以及 Inno Setup 6.3+。CRT 发现同时支持 `VC/Redist/MSVC/<版本>/<架构>/Microsoft.VC*.CRT` 和较新 `VC/Redist/MSVC/v143或v145/<版本>/<架构>/Microsoft.VC*.CRT`，跨布局按数字版本选择最新且含本架构必需 DLL 的有效目录。当前 GitHub 官方镜像清单列有 Inno Setup；脚本会发现 `ISCC.exe`，缺失时明确失败。自托管环境可以通过 `-InnoSetupCompiler` 和 `-VCRuntimeDirectory` 显式指定。
 
 Flutter 3.47.7 的 `build windows` 按运行 Dart 的主机 ABI 选择目标，未提供 `--target-platform` 参数。ARM64 Windows 上运行 x64 Dart 会构建 x64，因此不能把目录改名后当作 ARM64 分发。打包脚本会同时检查 OS、PowerShell、Dart、应用、Flutter 引擎、所有插件 DLL 和 AOT 架构。
 
@@ -57,7 +57,7 @@ ARM64 使用对应的 `arm64` 文件名。ZIP 解压后直接运行 `Portly/port
 
 ## 本地已验证与待验证
 
-2026-10-25 在 macOS ARM64 上使用官方 PowerShell 7.5.4 运行 29 项检查，覆盖脚本 AST 语法、PE32+ 和 ELF64 两架构识别、错误架构拒绝、截断 PE、普通和延迟导入、缺失 FFI/依赖拒绝，以及非 Windows 主机拒绝打包。另实际下载官方 Flutter 3.47.7 两架构引擎和 sqlite3 3.8.0 两架构 DLL，核对 PE 架构及 SQLite 固定哈希。独立 CMake 配置也确认禁用 JNI 后不生成/捆绑 JVM bridge。
+2026-10-25 在 macOS ARM64 上使用官方 PowerShell 7.5.4 运行 37 项检查，覆盖脚本 AST 语法、PE32+ 和 ELF64 两架构识别、错误架构拒绝、截断 PE、普通和延迟导入、缺失 FFI/依赖拒绝，以及非 Windows 主机拒绝打包。另实际下载官方 Flutter 3.47.7 两架构引擎和 sqlite3 3.8.0 两架构 DLL，核对 PE 架构及 SQLite 固定哈希。独立 CMake 配置也确认禁用 JNI 后不生成/捆绑 JVM bridge。
 
 尚未完成的 Windows 验收包括：MSVC 编译及链接、Inno 脚本实际编译、安装/卸载、原生界面启动、配置与历史/归档落盘、SQLite FTS5/trigram 查询、串口设备/DTR/RTS/自动重连、文件发送、多窗口退出。这些必须在相应 Windows 架构的 runner 或设备上执行，不能标记为已通过。
 

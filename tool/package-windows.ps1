@@ -57,11 +57,7 @@ if (-not $VCRuntimeDirectory) {
     $vsPath = & $vswhere -latest -products '*' -requires $toolComponent -property installationPath
     if ($LASTEXITCODE -ne 0 -or -not $vsPath) { throw 'Visual Studio C++ desktop workload is missing.' }
     $redistRoot = Join-Path $vsPath 'VC/Redist/MSVC'
-    $crt = @(Get-ChildItem -LiteralPath $redistRoot -Directory | Sort-Object { [version]$_.Name } -Descending | ForEach-Object {
-        Get-ChildItem -Path (Join-Path $_.FullName "$Architecture/Microsoft.VC*.CRT") -Directory -ErrorAction SilentlyContinue
-    }) | Select-Object -First 1
-    if (-not $crt) { throw "Matching $Architecture MSVC redistributable CRT is missing. Install its Visual Studio component or supply -VCRuntimeDirectory." }
-    $VCRuntimeDirectory = $crt.FullName
+    $VCRuntimeDirectory = Find-PortlyCrtDirectory $redistRoot $Architecture
 }
 $VCRuntimeDirectory = [IO.Path]::GetFullPath($VCRuntimeDirectory)
 $crtDlls = @(Get-PortlyCrtFiles $VCRuntimeDirectory $Architecture)

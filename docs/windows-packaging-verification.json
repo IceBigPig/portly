@@ -5,7 +5,7 @@
   "engineRevision": "deb287481e3ce9468f3434937ced4240a70539ca",
   "powershellVersion": "7.5.4",
   "powershellTarSha256": "3aaadd7ca62f1e4dbe59145b6af24e926d61f8da8a4782bc535e500c184135f0",
-  "syntaxAndFixtureChecksPassed": 29,
+  "syntaxAndFixtureChecksPassed": 37,
   "jniDisabledCmakeConfigurePassed": true,
   "windowsArm64DartArtifactHeadStatus": 200,
   "nativeAssets": [
@@ -112,5 +112,11 @@
     "nativeArchitectureSelectionPassed": true,
     "nativeDependencyClosurePassedWithFixtureExecutable": true,
     "windowsExecutionPerformed": false
-  }
+  },
+  "crtDiscoveryFixtureLayouts": [
+    "<numeric-version>/<architecture>/Microsoft.VC*.CRT",
+    "v143/<numeric-version>/<architecture>/Microsoft.VC*.CRT",
+    "v145/<numeric-version>/<architecture>/Microsoft.VC*.CRT"
+  ],
+  "crtDiscoveryFixtureChecksPassed": 8
 }

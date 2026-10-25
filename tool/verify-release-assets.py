@@ -7,7 +7,7 @@ import re
 import sys
 
 root = Path(sys.argv[1]).resolve()
-files = {p.name: p for p in root.iterdir() if p.is_file()}
+files = {p.name: p for p in root.iterdir() if p.is_file() and p.name != 'SHA256SUMS'}
 source = [name for name in files if re.fullmatch(r'Portly-\d+\.\d+\.\d+-source.zip', name)]
 if len(source) != 1:
     raise SystemExit('Exactly one corresponding source archive is required')
