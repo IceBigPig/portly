@@ -1,6 +1,6 @@
 # Windows x64 / ARM64 构建与分发
 
-这两种发行包必须在 Windows 构建。当前 macOS 工作区只完成了打包脚本、二进制校验器和依赖资产核对，没有生成或验证过 Portly 的 Windows 安装包。CI 的成功构建及安装验收结果应另行保留，不能把脚本测试当成 Windows 应用验收。
+这两种发行包必须在 Windows 构建。macOS 工作区提供打包脚本、二进制校验器和依赖资产核对；实际 Windows 构建、安装、启动和退出由对应架构的原生 CI 执行并保存报告。脚本测试不能代替 Windows 应用验收。
 
 ## 构建环境
 
@@ -57,9 +57,19 @@ ARM64 使用对应的 `arm64` 文件名。ZIP 解压后直接运行 `Portly/port
 
 ## 本地已验证与待验证
 
-2026-10-25 在 macOS ARM64 上使用官方 PowerShell 7.5.4 运行 37 项检查，覆盖脚本 AST 语法、PE32+ 和 ELF64 两架构识别、错误架构拒绝、截断 PE、普通和延迟导入、缺失 FFI/依赖拒绝，以及非 Windows 主机拒绝打包。另实际下载官方 Flutter 3.47.7 两架构引擎和 sqlite3 3.8.0 两架构 DLL，核对 PE 架构及 SQLite 固定哈希。独立 CMake 配置也确认禁用 JNI 后不生成/捆绑 JVM bridge。
+2026-10-25 在 macOS ARM64 上使用官方 PowerShell 7.5.4 运行 39 项检查，覆盖脚本 AST 语法、PE32+ 和 ELF64 两架构识别、错误架构拒绝、截断 PE、普通和延迟导入、缺失 FFI/依赖拒绝，以及非 Windows 主机拒绝打包。另实际下载官方 Flutter 3.47.7 两架构引擎和 sqlite3 3.8.0 两架构 DLL，核对 PE 架构及 SQLite 固定哈希。独立 CMake 配置也确认禁用 JNI 后不生成/捆绑 JVM bridge。
 
-尚未完成的 Windows 验收包括：MSVC 编译及链接、Inno 脚本实际编译、安装/卸载、原生界面启动、配置与历史/归档落盘、SQLite FTS5/trigram 查询、串口设备/DTR/RTS/自动重连、文件发送、多窗口退出。这些必须在相应 Windows 架构的 runner 或设备上执行，不能标记为已通过。
+Windows 发行门槛包括 MSVC 编译及链接、ISCC 编译、安装/启动、正常退出、数据库句柄释放、卸载后用户数据保留，实际结果以对应架构 CI 和随包 smoke 报告为准。串口设备/DTR/RTS/自动重连、文件发送、驱动矩阵及长时间运行仍需要相应实机验收，自动化通过不等于这些项目已通过。
+
+## 安装冒烟的原生崩溃取证
+
+`tool/windows/smoke-install.ps1` 保持原有正常关闭要求：退出码必须为0，不能把强制清理视为通过。报告同时记录真正进程PID、启动／关闭请求时间、清理前退出状态及十六进制退出码。若失败，`<RUNNER_TEMP>/portly-install-smoke-*/diagnostics/` 保存时间及PID关联的 Application Error／WER事件原始XML、原始消息和字段，包括实际faulting module、exception code、模块偏移；WER事件缺少PID时会明确标为较弱的应用名与时间窗口关联，不凭异常状态码猜测根因。
+
+取证器只在受控临时CI中临时设置 `HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\portly.exe` 的mini dump参数，并在结束时恢复原值／类型或删除新建app项；没有权限会明确记录未启用。它不会设置全局应用崩溃策略。若WER不可配置、环境已经有Microsoft签名的官方ProcDump，且 `HKCU\Software\Sysinternals\ProcDump` 的 `EulaAccepted` 已为DWORD 1，才作为已记录的debugger备用，监视一次未处理异常；否则记录不可用原因。取证不会接受新的EULA，不修改该EULA注册表项，不下载新工具，也不使用杀进程选项。已有Microsoft签名cdb时，对捕获的dump执行 `!analyze -v`、异常上下文、当前及全部线程栈和模块列表，限时30秒，原始dump仍保留。PDB只从本次Release复制，限制总量128MiB；Windows系统符号使用微软符号服务器，缓存不作为发行材料。
+
+诊断目录中的 `crash-diagnostics.json` 会说明WER／调试器是否可用、设置恢复结果及收集错误；没有dump或堆栈时不会声称已取得。CI应递归上传该诊断目录（包括`.json`、`.xml`、`.txt`、`.wer`、`.dmp`及可用`.pdb`），仅作为故障诊断artifact，不加入公开发行资产。安装与卸载`.log`及smoke报告仍保留。`tool/windows/test-crash-diagnostics.ps1` 只验证XML解析／PID关联，不会在macOS配置WER，也不代替真实Windows取证。
+
+对应一手说明：[WER user-mode dumps](https://learn.microsoft.com/en-us/windows/win32/wer/collecting-user-mode-dumps)、[Sysinternals ProcDump](https://learn.microsoft.com/en-us/sysinternals/downloads/procdump)、[WinDbg !analyze](https://learn.microsoft.com/en-us/windows-hardware/drivers/debuggercmds/-analyze)。
 
 ## 一手参考
 

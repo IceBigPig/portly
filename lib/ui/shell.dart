@@ -8,6 +8,7 @@ import 'package:window_manager/window_manager.dart';
 
 import '../state/app_model.dart';
 import '../state/session.dart';
+import '../platform/desktop_window.dart';
 import '../platform/storage.dart';
 import 'theme.dart';
 import 'workspace.dart';
@@ -128,7 +129,7 @@ class _AppShellState extends State<AppShell>
           await model.shutdown(discardUnsavedChanges: discard);
           if (progress.isActive) navigator.removeRoute(progress);
           model.dispose();
-          await (widget.closeWindow?.call() ?? windowManager.destroy());
+          await (widget.closeWindow?.call() ?? closeDesktopWindow());
           return;
         } catch (e) {
           if (progress.isActive) navigator.removeRoute(progress);

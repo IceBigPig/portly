@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: release-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.ref_type == 'branch' }}
 
 jobs:
   version:
@@ -72,12 +72,15 @@ jobs:
         run: ./tool/package-macos.sh --arch arm64 --version "$RELEASE_VERSION" --output-dir dist/macos
       - name: Package the complete corresponding source
         run: python3 tool/package-source.py --output-dir dist/source
+      - name: Stage a flat set of release assets
+        run: |
+          mkdir -p dist/publish
+          cp dist/macos/* dist/source/* dist/publish/
       - uses: actions/upload-artifact@v4
         with:
           name: release-macos-arm64-and-source
-          path: |
-            dist/macos/*
-            dist/source/*
+          path: dist/publish/*
+          compression-level: 0
           if-no-files-found: error
           retention-days: 30
 
@@ -106,6 +109,7 @@ jobs:
       - run: dart analyze lib test
       - run: flutter test --reporter expanded
       - run: ./tool/windows/test-packaging.ps1
+      - run: ./tool/windows/test-crash-diagnostics.ps1
       - run: python tool/test_sync_release_notices.py
       - name: Build and verify installer and portable ZIP
         env:
@@ -124,12 +128,14 @@ jobs:
           path: |
             dist/windows/${{ matrix.arch }}/*-smoke.json
             ${{ runner.temp }}/portly-install-smoke-*/*.log
+            ${{ runner.temp }}/portly-install-smoke-*/diagnostics/**
           if-no-files-found: ignore
           retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
           name: release-windows-${{ matrix.arch }}
           path: dist/windows/${{ matrix.arch }}/*
+          compression-level: 0
           if-no-files-found: error
           retention-days: 30
 

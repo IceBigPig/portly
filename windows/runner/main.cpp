@@ -15,29 +15,44 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
 
   // Initialize COM, so that it is available for use in the library and/or
   // plugins.
-  ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+  const HRESULT com_result =
+      ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-  flutter::DartProject project(L"data");
+  int exit_code = EXIT_SUCCESS;
+  {
+    // Flutter views and plugin COM resources must die before CoUninitialize.
+    flutter::DartProject project(L"data");
 
-  std::vector<std::string> command_line_arguments =
-      GetCommandLineArguments();
+    std::vector<std::string> command_line_arguments =
+        GetCommandLineArguments();
 
-  project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
+    project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
-  FlutterWindow window(project);
-  Win32Window::Point origin(10, 10);
-  Win32Window::Size size(1280, 720);
-  if (!window.Create(L"Portly", origin, size)) {
-    return EXIT_FAILURE;
+    FlutterWindow window(project);
+    Win32Window::Point origin(10, 10);
+    Win32Window::Size size(1280, 720);
+    if (!window.Create(L"Portly", origin, size)) {
+      exit_code = EXIT_FAILURE;
+    } else {
+      window.SetQuitOnClose(true);
+
+      ::MSG msg{};
+      BOOL message_result;
+      while ((message_result = ::GetMessage(&msg, nullptr, 0, 0)) > 0) {
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+      }
+      if (message_result == -1) {
+        exit_code = EXIT_FAILURE;
+      }
+    }
+    // Also handles a plugin posting WM_QUIT without destroying the native HWND.
+    // Destroy is idempotent after the normal WM_CLOSE/WM_DESTROY path.
+    window.Destroy();
   }
-  window.SetQuitOnClose(true);
 
-  ::MSG msg;
-  while (::GetMessage(&msg, nullptr, 0, 0)) {
-    ::TranslateMessage(&msg);
-    ::DispatchMessage(&msg);
+  if (SUCCEEDED(com_result)) {
+    ::CoUninitialize();
   }
-
-  ::CoUninitialize();
-  return EXIT_SUCCESS;
+  return exit_code;
 }

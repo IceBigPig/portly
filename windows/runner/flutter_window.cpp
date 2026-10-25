@@ -1,6 +1,7 @@
 #include "flutter_window.h"
 
 #include <optional>
+#include <utility>
 
 #include "flutter/generated_plugin_registrant.h"
 #include "desktop_multi_window/desktop_multi_window_plugin.h"
@@ -8,7 +9,12 @@
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
 
-FlutterWindow::~FlutterWindow() {}
+FlutterWindow::~FlutterWindow() {
+  // Destroy while virtual dispatch still reaches this class. Letting the
+  // controller's member destructor run first leaves it visible to reentrant
+  // window messages while its engine and plugins are already being torn down.
+  Destroy();
+}
 
 bool FlutterWindow::OnCreate() {
   if (!Win32Window::OnCreate()) {
@@ -45,9 +51,11 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
-  if (flutter_controller_) {
-    flutter_controller_ = nullptr;
-  }
+  DesktopMultiWindowSetWindowCreatedCallback(nullptr);
+  // Clear the published pointer before deleting the controller: destroying its
+  // child HWND can synchronously send messages back to this top-level window.
+  auto controller = std::move(flutter_controller_);
+  controller.reset();
 
   Win32Window::OnDestroy();
 }
@@ -68,7 +76,9 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
 
   switch (message) {
     case WM_FONTCHANGE:
-      flutter_controller_->engine()->ReloadSystemFonts();
+      if (flutter_controller_) {
+        flutter_controller_->engine()->ReloadSystemFonts();
+      }
       break;
   }
 

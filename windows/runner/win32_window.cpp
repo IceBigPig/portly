@@ -116,14 +116,18 @@ Win32Window::Win32Window() {
 }
 
 Win32Window::~Win32Window() {
-  --g_active_window_count;
   Destroy();
+  --g_active_window_count;
+  if (g_active_window_count == 0) {
+    WindowClassRegistrar::GetInstance()->UnregisterWindowClass();
+  }
 }
 
 bool Win32Window::Create(const std::wstring& title,
                          const Point& origin,
                          const Size& size) {
   Destroy();
+  destroy_notified_ = false;
 
   const wchar_t* window_class =
       WindowClassRegistrar::GetInstance()->GetWindowClass();
@@ -167,7 +171,13 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window,
     EnableFullDpiSupportIfAvailable(window);
     that->window_handle_ = window;
   } else if (Win32Window* that = GetThisFromHandle(window)) {
-    return that->MessageHandler(window, message, wparam, lparam);
+    const LRESULT result = that->MessageHandler(window, message, wparam, lparam);
+    if (message == WM_NCDESTROY) {
+      SetWindowLongPtr(window, GWLP_USERDATA, 0);
+      that->window_handle_ = nullptr;
+      that->child_content_ = nullptr;
+    }
+    return result;
   }
 
   return DefWindowProc(window, message, wparam, lparam);
@@ -218,19 +228,27 @@ Win32Window::MessageHandler(HWND hwnd,
       return 0;
   }
 
-  return DefWindowProc(window_handle_, message, wparam, lparam);
+  // WM_NCDESTROY still needs the HWND supplied by Windows after WM_DESTROY has
+  // cleared our cached handle.
+  return DefWindowProc(hwnd, message, wparam, lparam);
 }
 
 void Win32Window::Destroy() {
-  OnDestroy();
+  if (destroying_ || (destroy_notified_ && !window_handle_)) {
+    return;
+  }
+  destroying_ = true;
+  child_content_ = nullptr;
+  if (!destroy_notified_) {
+    destroy_notified_ = true;
+    OnDestroy();
+  }
 
   if (window_handle_) {
     DestroyWindow(window_handle_);
     window_handle_ = nullptr;
   }
-  if (g_active_window_count == 0) {
-    WindowClassRegistrar::GetInstance()->UnregisterWindowClass();
-  }
+  destroying_ = false;
 }
 
 Win32Window* Win32Window::GetThisFromHandle(HWND const window) noexcept {
@@ -250,7 +268,7 @@ void Win32Window::SetChildContent(HWND content) {
 }
 
 RECT Win32Window::GetClientArea() {
-  RECT frame;
+  RECT frame{};
   GetClientRect(window_handle_, &frame);
   return frame;
 }

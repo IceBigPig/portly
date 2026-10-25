@@ -3,18 +3,74 @@ import 'dart:convert';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
-import 'package:window_manager/window_manager.dart';
 
 import '../core/models.dart';
 import '../state/app_model.dart';
 import '../state/session.dart';
 import '../ui/compare_workspace.dart';
 import '../ui/theme.dart';
+import 'desktop_window.dart';
+
+/// The RPC acknowledgement only accepts a close request. Registry removal is
+/// emitted by the native plugin destructor after its engine has stopped.
+Future<void> closeComparisonWindows(
+  String hostWindowId, {
+  Duration timeout = const Duration(seconds: 5),
+  Duration pollInterval = const Duration(milliseconds: 25),
+}) async {
+  final watch = Stopwatch()..start();
+  Duration remaining() {
+    final left = timeout - watch.elapsed;
+    if (left <= Duration.zero) {
+      throw TimeoutException('等待对比窗口关闭超时', timeout);
+    }
+    return left;
+  }
+
+  final windows = (await WindowController.getAll().timeout(remaining()))
+      .where((window) => window.windowId != hostWindowId)
+      .toList();
+  if (windows.isEmpty) return;
+  final targets = windows.map((window) => window.windowId).toSet();
+  final failures = <String, Object>{};
+  await Future.wait([
+    for (final window in windows)
+      () async {
+        try {
+          final left = remaining();
+          await window
+              .invokeMethod('close')
+              .timeout(
+                left < const Duration(seconds: 1)
+                    ? left
+                    : const Duration(seconds: 1),
+              );
+        } catch (issue) {
+          failures[window.windowId] = issue;
+        }
+      }(),
+  ]);
+  while (true) {
+    final registered = (await WindowController.getAll().timeout(remaining()))
+        .map((window) => window.windowId)
+        .toSet();
+    final pending = targets.intersection(registered);
+    if (pending.isEmpty) return;
+    final failed = pending.where(failures.containsKey).firstOrNull;
+    if (failed != null) {
+      throw StateError('关闭对比窗口失败：${failures[failed]}');
+    }
+    final left = remaining();
+    await Future<void>.delayed(left < pollInterval ? left : pollInterval);
+  }
+}
 
 Future<void> installCompareHost(
   AppModel model,
   WindowController controller,
 ) async {
+  final opening = <Future<void>>{};
+  var closeEpoch = 0;
   await controller.setWindowMethodHandler((call) async {
     if (call.method == 'snapshot') {
       final args = Map<String, dynamic>.from(call.arguments as Map);
@@ -107,33 +163,62 @@ Future<void> installCompareHost(
     }
     throw UnsupportedError(call.method);
   });
-  model.openCompareWindow = () async {
-    if (model.closing || model.shutdownComplete) throw StateError('主窗口正在关闭');
-    final second =
-        model.sessions
-            .where((s) => s.id == model.secondarySessionId)
-            .firstOrNull ??
-        model.sessions.where((s) => s.id != model.currentId).firstOrNull ??
-        model.current;
-    final window = await WindowController.create(
-      WindowConfiguration(
-        arguments: jsonEncode({
-          'type': 'compare',
-          'host': controller.windowId,
-          'first': model.currentId,
-          'second': second.id,
-        }),
+  model.openCompareWindow = () {
+    Future<void> create() async {
+      if (model.closing || model.shutdownComplete) throw StateError('主窗口正在关闭');
+      final admittedEpoch = closeEpoch;
+      final second =
+          model.sessions
+              .where((s) => s.id == model.secondarySessionId)
+              .firstOrNull ??
+          model.sessions.where((s) => s.id != model.currentId).firstOrNull ??
+          model.current;
+      final window = await WindowController.create(
+        WindowConfiguration(
+          arguments: jsonEncode({
+            'type': 'compare',
+            'host': controller.windowId,
+            'first': model.currentId,
+            'second': second.id,
+          }),
+        ),
+      );
+      if (model.closing ||
+          model.shutdownComplete ||
+          admittedEpoch != closeEpoch) {
+        return;
+      }
+      await window.show();
+    }
+
+    final work = create();
+    opening.add(work);
+    // Keep the original Future observable by the caller. A failed creation is
+    // removed only after settling, so a later close can retry existing engines.
+    unawaited(
+      work.then<void>(
+        (_) {
+          opening.remove(work);
+        },
+        onError: (Object issue, StackTrace stack) {
+          opening.remove(work);
+        },
       ),
     );
-    await window.show();
+    return work;
   };
   model.closeCompareWindows = () async {
-    for (final window in await WindowController.getAll()) {
-      if (window.windowId == controller.windowId) continue;
-      try {
-        await window.invokeMethod('close').timeout(const Duration(seconds: 1));
-      } catch (_) {}
+    closeEpoch++;
+    const timeout = Duration(seconds: 5);
+    final watch = Stopwatch()..start();
+    // timeout() does not remove unfinished work from [opening]. Even if close
+    // fails, a late-created engine remains owned and will be closed on retry.
+    await Future.wait(List<Future<void>>.of(opening)).timeout(timeout);
+    final left = timeout - watch.elapsed;
+    if (left <= Duration.zero) {
+      throw TimeoutException('等待对比窗口创建完成超时', timeout);
     }
+    await closeComparisonWindows(controller.windowId, timeout: left);
   };
 }
 
@@ -174,7 +259,7 @@ class _CompareWindowState extends State<CompareWindow> {
     };
     widget.controller.setWindowMethodHandler((call) async {
       if (call.method == 'close') {
-        unawaited(Future<void>.delayed(Duration.zero, windowManager.destroy));
+        unawaited(Future<void>.delayed(Duration.zero, closeDesktopWindow));
         return true;
       }
       return null;

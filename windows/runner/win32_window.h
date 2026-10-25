@@ -92,6 +92,11 @@ class Win32Window {
 
   bool quit_on_close_ = false;
 
+  // DestroyWindow and Flutter engine teardown can synchronously reenter WndProc.
+  // Notify the subclass exactly once for each Create lifecycle.
+  bool destroying_ = false;
+  bool destroy_notified_ = true;
+
   // window handle for top level window.
   HWND window_handle_ = nullptr;
 

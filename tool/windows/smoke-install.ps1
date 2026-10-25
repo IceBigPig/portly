@@ -20,6 +20,7 @@ $processArch = [Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture
 if ($osArch -ne $Architecture -or $processArch -ne $Architecture) { throw "Native $Architecture Windows and PowerShell are required." }
 $Installer = (Resolve-Path -LiteralPath $Installer).Path
 Import-Module (Join-Path $PSScriptRoot 'PortlyPackaging.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot 'PortlyCrashDiagnostics.psm1') -Force
 $runRoot = Join-Path ([IO.Path]::GetFullPath($env:RUNNER_TEMP)) ("portly-install-smoke-" + [guid]::NewGuid().ToString('N'))
 $installDir = Join-Path $runRoot 'installed'
 New-Item -ItemType Directory -Path $runRoot | Out-Null
@@ -48,6 +49,8 @@ $report = [ordered]@{
 }
 $app = $null
 $activeInstaller = $null
+$crashDiagnostics = $null
+$exe = ''
 function Invoke-InstallerProcess([string]$File, [string]$Arguments) {
     $script:activeInstaller = Start-Process -FilePath $File -ArgumentList $Arguments -PassThru
     if (-not $script:activeInstaller.WaitForExit(120000)) { throw 'Installer/uninstaller timed out.' }
@@ -80,7 +83,11 @@ try {
     }
     $null = Assert-PortlyBundle $payloadCheck $Architecture
     $report.nativePayloadVerified = $true
+    $crashDiagnostics = New-PortlyCrashDiagnostics -Directory (Join-Path $runRoot 'diagnostics') -Architecture $Architecture
+    $report['appLaunchRequestedUtc'] = [DateTime]::UtcNow.ToString('o')
     $app = Start-Process -FilePath $exe -WorkingDirectory $installDir -PassThru
+    $report['processId'] = $app.Id
+    Start-PortlyCrashDiagnostics -Context $crashDiagnostics -TargetProcessId $app.Id -Exe $exe
     $deadline = [DateTime]::UtcNow.AddSeconds($StartupTimeoutSeconds)
     while ([DateTime]::UtcNow -lt $deadline) {
         $app.Refresh()
@@ -94,6 +101,7 @@ try {
     Start-Sleep -Seconds 3
     $app.Refresh()
     if ($app.HasExited) { throw "Portly exited unexpectedly during startup (code $($app.ExitCode))." }
+    $report['closeRequestedUtc'] = [DateTime]::UtcNow.ToString('o')
     if (-not $app.CloseMainWindow()) { throw 'Could not request the normal window-close shutdown path.' }
     if (-not $app.WaitForExit($ExitTimeoutSeconds * 1000)) { throw 'Graceful shutdown timed out; data safety was not verified.' }
     if ($app.ExitCode -ne 0) { throw "Portly shutdown returned exit code $($app.ExitCode)." }
@@ -127,6 +135,21 @@ try {
     $report.error = $_.Exception.Message
     throw
 } finally {
+    if ($app) {
+        try {
+            $app.Refresh()
+            $report['appHasExitedBeforeCleanup'] = $app.HasExited
+            if ($app.HasExited) {
+                $report['appExitCode'] = $app.ExitCode
+                $report['appExitCodeHex'] = '0x{0:X8}' -f ([BitConverter]::ToUInt32([BitConverter]::GetBytes([int]$app.ExitCode), 0))
+            }
+        } catch { $report['exitCodeReadError'] = $_.Exception.Message }
+    }
+    if ($crashDiagnostics) {
+        $symbols = Join-Path (Split-Path $PSScriptRoot -Parent) "../build/windows/$Architecture/runner/Release"
+        try { $report['crashDiagnostics'] = Complete-PortlyCrashDiagnostics -Context $crashDiagnostics -Failed (-not $report.passed) -SymbolDirectories @($installDir, $symbols) }
+        catch { $report['crashDiagnosticsError'] = $_.Exception.Message }
+    }
     # Force termination is cleanup of this failed ephemeral CI run only, and is
     # always recorded as failure. It never substitutes for graceful shutdown.
     foreach ($process in @($app, $activeInstaller)) {

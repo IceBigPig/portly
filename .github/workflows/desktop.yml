@@ -33,3 +33,4 @@ jobs:
           python3 tool/test_sync_release_notices.py
           bash -n tool/package-macos.sh
           pwsh -NoProfile -File tool/windows/test-packaging.ps1
+          pwsh -NoProfile -File tool/windows/test-crash-diagnostics.ps1
